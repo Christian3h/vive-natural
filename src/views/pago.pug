@@ -1,0 +1,146 @@
+doctype html
+html(lang="es")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    title Resumen de Pago
+    
+  body 
+    main
+      h1 Resumen de tu Pedido
+      
+      #carritoContainer
+
+      section#resumen
+        h2 Total
+        p#total $0
+        
+        .acciones
+          a.btn(href="/carrito") Editar Carrito
+          button.btn#continuarPago Continuar con el Pago
+
+        // Modal de método de pago
+        div#modalPago(class="modal oculto")
+            div.modal__contenido
+                h2 Selecciona el método de pago
+
+                form#formMetodoPago
+                    label
+                        input(type="radio", name="metodo", value="contado", checked)
+                        | Pago de contado
+                    label
+                        input(type="radio", name="metodo", value="cuotas")
+                        | Pago en cuotas
+
+                    // Campos adicionales si elige cuotas
+                    div#opcionesCuotas(class="oculto")
+                        label(for="cuotasSelect")
+                        | Número de cuotas:
+                        select#cuotasSelect(name="cuotas")
+                        // Las opciones se insertan con JS
+
+                        p
+                        | Valor por cuota: 
+                        span#valorCuota $0
+
+                        label(for="fechaLimite")
+                            | Fecha límite de pago por mes:
+                            input(type="date", name="fecha_limite", id="fechaLimite")
+
+                    .acciones
+                        button.btn(type="submit") Confirmar
+                        button.btn#cancelarModal(type="button") Cancelar
+
+
+
+    script(type="module", src="/js/pages/pagoPages.js")
+
+    style. 
+        body {
+        font-family: sans-serif;
+        padding: 20px;
+        background: #f7f7f7;
+        }
+
+        h1, h2 {
+        text-align: center;
+        }
+
+        .producto {
+        display: flex;
+        background: #fff;
+        margin: 10px 0;
+        padding: 10px;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .producto__imagen {
+        width: 120px;
+        height: auto;
+        border-radius: 8px;
+        margin-right: 15px;
+        }
+
+        .producto__info p {
+        margin: 4px 0;
+        }
+
+        #resumen {
+        margin-top: 30px;
+        background: #fff;
+        padding: 20px;
+        text-align: center;
+        border-radius: 8px;
+        }
+
+        .acciones {
+        display: flex;
+        justify-content: space-around;
+        margin-top: 20px;
+        }
+
+        .btn {
+        padding: 10px 20px;
+        background-color: #00a86b;
+        color: white;
+        text-decoration: none;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: background 0.3s ease;
+        }
+
+        .btn:hover {
+        background-color: #007f55;
+        }
+
+        .modal {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100vw; height: 100vh;
+        background: rgba(0,0,0,0.6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 100;
+        }
+
+        .modal__contenido {
+        background: white;
+        padding: 20px 30px;
+        border-radius: 10px;
+        width: 300px;
+        text-align: center;
+        }
+
+        .modal label {
+        display: block;
+        margin: 10px 0;
+        font-weight: bold;
+        }
+
+        .oculto {
+        display: none;
+        }

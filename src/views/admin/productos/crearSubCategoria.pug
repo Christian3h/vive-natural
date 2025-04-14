@@ -1,0 +1,17 @@
+doctype html
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        title categoria 
+    body 
+        form(action="/api/categoria/crearSubCategoria" method="POST")
+            label categoria:
+                select(name="categoria", id="categoria")
+                    option(value="") Selecciona una categoría
+                    each categoria in categorias
+                        option(value=`${categoria.id}`) #{categoria.nombre}
+
+            label sub categoria Nombre 
+                input(type="text" name ="subCategoria" required ) 
+            button(type="submit") Crear categoria

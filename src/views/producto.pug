@@ -1,0 +1,20 @@
+doctype html
+html(lang="es")
+    head
+        meta(charset="UTF-8")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        title Vive Natural
+        link(rel="stylesheet", href="/css/main/index.css")
+        link(rel="stylesheet", href="/css/prueba.css")
+    body 
+        include ./partials/nav
+        #productoContainer
+        #totalContainer
+
+        footer
+            p Derechos reservados 2025
+
+
+    script(src="../js/components/cart/carrito.js" type="module" defer)
+    script(type="module", src="../js/pages/products/producto.js" defer) 
+    script(src="../js/pages/producto.js" type="module" defer)

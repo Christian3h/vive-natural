@@ -1,0 +1,17 @@
+:root{
+    --verde-oscuro-principal: #1B4332;
+    --verde-oliva: #4A7856;
+    --beige-claro: #EDE9E3;
+    --gris-piedra: #A8A8A8;
+    --blanco-roto: #FAF7F2;
+    --dorado-suave: #C9A86A;
+
+    
+    /* tamaños para las letras  */
+    --letra-grande: 4rem;
+    --letra-titulo: 3rem;
+    --letra-subtitulo: 1.5rem;
+    --letra-texto-un-poquito: 1.2rem;
+    --letra-texto: 1rem;
+}
+

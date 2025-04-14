@@ -1,0 +1,22 @@
+header
+    nav.desactivo 
+        .reponsive
+            h1 Vive natural 
+            button( id="menu-toggle") ☰ 
+                span#carrito-cantidadM 0
+        
+        a(href="/" id="inicio") Inicio
+        a(href="/contacto") Contacto
+        a(href="/tienda") Tienda
+        a(href="/#informacion") Información
+        a(href="/carrito" id="carrito")
+            | Carrito  
+            span#carrito-cantidad 0
+        
+        if usuario
+            a(href='/perfil')
+                img(src= `${usuario.profile_picture}` class="perfil-img" alt="Foto de perfil")
+        else
+            a(href='/sesion') Iniciar sesión
+
+        script(type="module", src="../js/components/nav.js" defer) 

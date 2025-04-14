@@ -1,0 +1,15 @@
+/* archivo para los colores  */
+@import "../_variables/_colores.css";
+
+/* archivo para los reset osea lo del margin y padding 0 */
+@import "../_resets/_resets.css";
+
+/* archivo para los componentes nav y footer */
+@import "../_components/_nav.css";
+@import "../_components/_footer.css";
+
+
+/* archivo para el fondo el color de fondo para todo el archivo */
+@import "../_layout/_fondo.css";
+
+

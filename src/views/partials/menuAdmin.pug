@@ -1,0 +1,26 @@
+header
+    nav.admin-nav
+        #menu-lateral
+            ul
+                li
+                    a(href="/sesion/admin/" data-seccion="finanzas") Finanzas
+                    ul.submenu
+                        li: a(href="/admin/finanzas/crear") Crear finanza
+                        li: a(href="/admin/finanzas/lista") Lista de finanzas
+                li
+                    a(href="/sesion/admin/productos/" data-seccion="productos" class="has-submenu") Productos
+                    ul.submenu
+                        li: a(href="/sesion/admin/producto/crear") Crear producto
+                        li: a(href="/sesion/admin/categoria/crear") Crear categoría
+                        li: a(href="/sesion/admin/productos/") Lista de productos
+                li
+                    a(href="#" data-seccion="clientes") Clientes
+                    ul.submenu
+                        li: a(href="/admin/clientes/crear") Clientes pendientes
+                        li: a(href="/admin/clientes/lista") Administrar clientes 
+                li
+                    a(href="#" data-seccion="pedidos") Pedidos
+        #menu-user
+            a(href="/perfil")
+                img(src= `${usuario.profile_picture}` class="perfil-img" alt="Foto de perfil")
+            a(href="/sesion/logout") Cerrar sesión

@@ -1,0 +1,21 @@
+main{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+#tienda h1{
+    font-size: var(--letra-titulo) ;
+    margin: 50px;
+    text-align: center;
+}
+
+#productosContainer h1{
+    font-size: var(--letra-titulo);
+    text-align: center;
+    color: var(--verde-oliva);
+    grid-column: 1/4;
+    margin: 50px auto;
+}

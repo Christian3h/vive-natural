@@ -1,0 +1,38 @@
+[
+    {
+        "productoId": "49510A56046311F0AD77C0353235CF9F",
+        "precio": 10000,
+        "cantidad": 1,
+        "nombre": "Super producto 2",
+        "descripcion": "esto es un mega producto con una super descripcion",
+        "imagenes": "/uploads/productos/49510a56046311f0ad77c0353235cf9f_0.webp,/uploads/productos/49510a56046311f0ad77c0353235cf9f_1.webp",
+        "stock": 3
+    },
+    {
+        "productoId": "49C12547046311F0AD77C0353235CF9F",
+        "precio": 10000,
+        "cantidad": 5,
+        "nombre": "Super producto 3",
+        "descripcion": "esto es un mega producto con una super descripcion",
+        "imagenes": "/uploads/productos/49c12547046311f0ad77c0353235cf9f_0.webp,/uploads/productos/49c12547046311f0ad77c0353235cf9f_1.webp",
+        "stock": 344
+    },
+    {
+        "productoId": "4A2D31C0046311F0AD77C0353235CF9F",
+        "precio": 10000,
+        "cantidad": 8,
+        "nombre": "Super producto 4",
+        "descripcion": "esto es un mega producto con una super descripcion",
+        "imagenes": "/uploads/productos/4a2d31c0046311f0ad77c0353235cf9f_0.webp,/uploads/productos/4a2d31c0046311f0ad77c0353235cf9f_1.webp",
+        "stock": 33
+    },
+    {
+        "productoId": "91C128E20B9D11F09F00C0353235CF9F",
+        "precio": 90,
+        "cantidad": 2,
+        "nombre": "Magnesio vitamina",
+        "descripcion": "no se super descripcion xddd",
+        "imagenes": "/uploads/productos/91c128e20b9d11f09f00c0353235cf9f_0.webp",
+        "stock": 2
+    }
+]

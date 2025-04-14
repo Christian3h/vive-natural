@@ -1,0 +1,22 @@
+doctype html
+html(lang="es")
+    head
+        meta(charset="UTF-8")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        title Vive Natural
+        link(rel="stylesheet", href="../css/main/carrito.css")
+    body 
+        include ./partials/nav
+        h1 Carrito de compras 
+        article#productosContenedor
+            #carritoContainer
+        article#botonesCarrito
+            #totalContainer
+            #botonesCarritoContainer
+                button.vaciar-carrito vaciar carrito de compras
+                button(class="comprar-carrito" id = "comprarCarrito") comprar carrito de compras
+            
+
+        include ./partials/footer
+
+    script(type="module", src="../js/pages/cart/carritoPages.js" defer) 

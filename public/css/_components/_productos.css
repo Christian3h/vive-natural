@@ -1,0 +1,154 @@
+
+#productosContainer{
+    display: grid;
+    justify-items: center;
+    align-items: center;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    padding: 10px;
+}
+
+.producto-card {
+    border: 1px solid var(--verde-oscuro-principal);
+    padding: 10px;
+    margin: 10px;
+    display: grid;
+    grid-template-rows: 20% 1fr 15%;
+    width: 25dvw;
+    min-height: 600px;
+    border-radius: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+.text-container{
+    display: grid;
+    grid-template-rows: repeat(4, 1fr);
+}
+
+.text-container h3{
+    grid-row: 1/2;
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+.botones-container{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+}
+.cantidad-container{
+    grid-column: 1/ -1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+}
+
+.cantidad-container input{
+    width: 50px;
+    text-align: center;
+    background-color: transparent;
+    border: 1px solid var(--verde-oscuro-principal);
+    color: var(--verde-oscuro-principal);
+    font-size: var(--letra-texto-un-poquito);
+    padding: 5px;
+    border-radius: 5px;
+    
+}
+
+.cantidad-container button{
+    width: 30px;
+    background-color: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 30px;
+    border: 1px solid var(--verde-oscuro-principal);
+    color: var(--verde-oscuro-principal);
+    font-size: var(--letra-texto-un-poquito);
+    padding: 5px;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.cantidad-container button:hover{
+    scale: 1.1;
+    background-color: var(--verde-oscuro-principal) ;
+    color: var(--blanco-roto) ;
+}
+
+.producto-card:hover {
+    transform: translateY(-5px);
+}
+
+.boton-funcion{
+    width: 95%;
+    height: 40px;
+    font-size: var(--letra-texto);
+    margin: 5px;
+    border-radius: 5px;
+    background-color: transparent;
+    border: 1px solid var(--verde-oscuro-principal);
+    color: var(--verde-oscuro-principal);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.boton-funcion:hover {
+    scale: 1.1;
+    background-color: var(--verde-oscuro-principal) ;
+    color: var(--blanco-roto) ;
+}
+
+/* Estilo general de la galería */
+.imagenes-container {
+    display: flex;
+    overflow: hidden; /* Para esconder las imágenes fuera de la vista */
+    width: 100%; /* Ancho completo del contenedor */
+    height: 300px; /* Ajusta la altura de la galería */
+    position: relative;
+}
+
+/* Cada imagen dentro de la galería */
+.imagenes-container img {
+    min-width: 100%;
+    transition: transform 0.5s ease-in-out; /* Efecto de deslizamiento suave */
+}
+
+.imagenes-container img {
+    width: 100%; /* Asegura que la imagen ocupe todo el ancho del contenedor */
+    height: 100%;
+    object-fit: cover; /* Para que las imágenes se adapten bien al contenedor */
+}
+
+/* Estilo del contenedor activo (cuando se desliza) */
+.imagenes-container:hover .imagenes-container img {
+    transform: translateX(-100%); /* Deslizar la imagen a la izquierda al hacer hover */
+}
+
+
+.producto-imagen {
+    width: 100%;
+    height: auto;
+}
+
+@media (max-width: 1000px) {
+    #productosContainer {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .producto-card{
+        width: auto;
+    }
+}
+
+@media (max-width: 705px) {
+    #productosContainer {
+        grid-template-columns: repeat(1, 1fr);
+        width: 100%;
+        padding: 0;
+    }
+    .producto-card{
+        width: 80%;
+    }
+}

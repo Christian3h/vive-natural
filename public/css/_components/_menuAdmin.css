@@ -1,0 +1,83 @@
+
+/* Menú lateral */
+.admin-nav {
+    width: 250px;
+    background-color: var(--verde-oscuro-principal);
+    color: var(--blanco-roto);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+/* Contenido principal */
+main, .contenido-principal {
+    flex: 1;
+    padding: 20px;
+    background-color: var(--blanco-roto);
+    font-size: var(--letra-texto);
+}
+
+/* Navegación */
+.admin-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.admin-nav li {
+    position: relative;
+}
+
+.admin-nav a {
+    display: block;
+    padding: 12px 20px;
+    color: var(--blanco-roto);
+    text-decoration: none;
+    transition: background 0.3s;
+    font-size: var(--letra-texto-un-poquito);
+}
+
+.admin-nav a:hover {
+    background-color: var(--verde-oliva);
+}
+
+/* Submenús con animación suave */
+.submenu {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    background-color: var(--dorado-suave);
+    color: var(--verde-oscuro-principal);
+}
+
+/* Mostrar submenú al hacer hover */
+li:hover > .submenu {
+    max-height: 500px; /* suficiente para mostrar los ítems */
+    opacity: 1;
+    visibility: visible;
+    transition: all 0.4s ease-in-out;
+}
+
+/* Ítems del submenú */
+.submenu li a {
+    padding-left: 40px;
+    background-color: var(--dorado-suave);
+    color: var(--verde-oscuro-principal);
+    font-size: var(--letra-texto);
+    transition: background-color 0.3s;
+}
+
+.submenu li a:hover {
+    background-color: var(--beige-claro);
+    color: var(--verde-oscuro-principal);
+}
+
+#menu-user img{
+    border-radius: 50%;
+}

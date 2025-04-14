@@ -1,0 +1,43 @@
+doctype html
+html(lang="es")
+    head
+        meta(charset="UTF-8")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        title Vive natural
+        link(rel="stylesheet", href="/css/main/dashboard.css")
+    body
+        include  ../../partials/menuAdmin.pug
+        main
+            article   
+                form(class="producto-crear")
+
+                    label(for="nombre") Nombre del producto
+                    input( required type="text", name="nombre", placeholder="Nombre del producto")
+
+                    label(for="descripcion") Descripcion del producto
+                    textarea( required type="text", name="descripcion", id="descripcion" placeholder="Descripcion del producto")
+
+                    label(for="precio") Precio del producto
+                    input( required type="number", name="precio", placeholder="Precio del producto")
+
+                    label(for="stock") Stock del producto
+                    input( required type="number", name="stock", placeholder="Stock del producto")
+
+                    label(for="categoria") Categoría del producto
+                    select( required name="categoria", id="categoria")
+                        option(value="") Selecciona una categoría
+                        each categoria in categorias
+                            option(value=`${categoria.id}`) #{categoria.nombre}
+
+                    label(for="subCategoria") Subcategoría del producto
+                    select( required name="subCategoria", id="subCategoria")
+                        option(value="") Selecciona una subcategoría
+                        each subcategoria in subcategorias
+                            option(value=`${subcategoria.id}`) #{subcategoria.nombre}
+
+                    label(for="imagen") Imagenes del producto
+                    input( required type="file", name="imagen", accept="image/*")
+
+                    button(type="submit") Crear producto
+
+    script(type="module", src="/js/utils/admin/crearAdmin.js" defer) 

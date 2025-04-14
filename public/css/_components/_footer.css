@@ -1,0 +1,19 @@
+footer{
+    background-color: var(--verde-oscuro-principal);
+    color: var(--blanco-roto);
+    height: 10dvh;
+    min-height: 120px;
+    width: 100%;
+    display: grid;  
+    place-content: center;
+    position:static;
+    bottom: 0;
+}
+
+footer p{
+    text-align: center;
+}
+
+footer p:hover{
+    color: var(--verde-oliva);
+}

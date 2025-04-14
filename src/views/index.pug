@@ -1,0 +1,23 @@
+doctype html
+html(lang="es")
+    head
+        meta(charset="UTF-8")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        title Vive Natural
+        link(rel="stylesheet", href="/css/main/index.css")
+    body 
+        include ./partials/nav
+        main 
+            article.inicio
+                h1 Vive Natural
+                p Tu mejor versión comienza hoy
+            article.info#informacion
+                h2.titulo Texto de informaicon 
+                p.texto Lorem ipsum dolor sit amet consectetur, adipisicing elit. Officiis explicabo, molestiae impedit quod ipsa laudantium eaque autem esse molestias aliquam corporis debitis inventore ut illum suscipit expedita eveniet numquam praesentium.
+            article.productos
+                h2.titulo productos
+                div#productosContainer
+        include ./partials/footer
+        
+        script(src="../js/pages/indexPages.js" type="module" defer)
+        

@@ -1,0 +1,156 @@
+header {
+    height: 7vh; /* Cambiar a vh */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 0;
+    position: sticky;
+    background-color: var(--verde-oscuro-principal);
+    color: var(--blanco-roto);
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); 
+    animation: 1s ease-in-out 1s;
+    font-size: var(--letra-subtitulo);
+    z-index: 1000;
+    width: 100%;
+}
+
+nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px; 
+}
+
+#carrito span{
+    position: absolute;
+    z-index: 10;
+    width: 20px;
+    height: 20px;
+    top: -15px;
+    right: -15px;
+    background-color: var(--verde-oliva);
+    color: var(--blanco-roto);
+    padding: 5px ;
+    text-align: center;
+    border-radius: 50%;
+    font-size: var(--letra-texto);
+}
+
+button span{
+    overflow: hidden;
+    position: absolute;
+    z-index: 11;
+    width: 20px;
+    height: 20px;
+    top: 10px;
+    right: 10px;
+    background-color: var(--verde-oliva);
+    color: var(--blanco-roto);
+    padding: 5px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--letra-texto);
+}
+
+
+nav a {
+    text-decoration: none;
+    color: var(--blanco-roto);
+    margin: 10px;
+    position: relative; /* Para permitir posicionar el pseudo-elemento */
+}
+
+nav img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+nav a:hover {
+    color: var(--verde-oliva);
+}
+
+nav a::after {
+    content: "";
+    position: absolute;
+    bottom: -5px; /* Distancia entre el texto y la línea */
+    left: 50%; /* Centra la línea */
+    width: 0%; /* Empieza desde 0 */
+    height: 2px;
+    background-color: var(--blanco-roto);
+    transform: translateX(-50%); /* Alinea la línea exactamente en el centro del enlace */
+    transition: width 0.3s ease-out; /* Animación de la línea */
+}
+
+nav a:hover::after {
+    width: 100%; /* Crece hasta el 100% cuando se hace hover */
+}
+
+nav .reponsive{
+    display: none;
+    width: 90dvw;
+}
+
+nav .reponsive button{
+    border: none;
+    background-color: transparent;
+    color: var(--blanco-roto);
+    font-size: var(--letra-titulo);
+    cursor: pointer;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.activoH{
+    height: 100dvh;
+}
+
+.activo{
+    display: grid;
+    grid-template-rows: 10dvh repeat(6, 1fr);
+    height: 100dvh;
+}
+
+.activo a{
+    display: block;
+}
+
+.activo #inicio{
+    grid-row: 2/3;
+}
+
+@media (max-width: 1000px) {
+
+
+
+    header{
+        height: 11dvh;
+    }
+
+    nav {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #carrito #carrito-cantidad{
+        display: none !important;
+    }
+
+    nav a{
+        display: none;
+    }
+    nav .reponsive{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+}
+

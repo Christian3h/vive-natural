@@ -1,0 +1,32 @@
+#ordenarBotones {
+    max-width: 800px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    width: 100%;
+}
+
+#ordenarBotones section{
+    width: 80%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 0 20px 0;
+}
+
+section input, 
+section select{
+    width: 60%;
+    max-width: 300px;
+    height: 40px;
+    border-radius: 5px;
+    border: none;
+    font-size: var(--letra-texto-un-poquito);
+}
+
+section label{
+    font-size: var(--letra-texto-un-poquito);
+    color: var(--color-texto);
+}

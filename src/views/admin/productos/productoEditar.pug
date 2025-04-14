@@ -1,0 +1,63 @@
+doctype html
+html(lang="es")
+    head
+        meta(charset="UTF-8")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        title Editar producto | vive natural 
+        link(rel="stylesheet", href="/css/main/dashboard.css")
+    body 
+        include ../../partials/menuAdmin.pug
+        main
+            article 
+                form
+                    label(for="nombreProducto") Nombre del producto 
+                    input(type="text" name="nombreProducto" id="nombreProducto" value=`${producto.nombre}`)
+
+                    label(for="descripcionProducto") Descripcion del producto 
+                    textarea(name="descripcionProducto" id="descripcionProducto")  #{producto.descripcion}
+
+                    label(for="categoria") Categoría del producto
+                    select(name="categoria" id="categoria")
+                        if producto.categorias
+                            each categoria in producto.categorias
+                                option(
+                                    value=categoria.id
+                                    selected=(categoria.id == producto.id_categoria ? true : false)
+                                ) #{categoria.nombre}
+                        else
+                            option(value="") No hay categorías disponibles
+
+
+                    label(for="subCategoriaProducto") Sub categoria producto 
+                    select(name="subCategoriaProducto" id="subCategoriaProducto") 
+                        if producto.subcategoria
+                            each subcategoria in producto.subcategoria
+                                option(
+                                    value=subcategoria.id
+                                    selected=(subcategoria.id == producto.id_subcategoria ? true : false)
+                                ) #{subcategoria.nombre}
+                        else
+                            option(value="") No hay subcategorías disponibles
+
+                    label(for="precioProducto") Precio del producto 
+                    input(type="number", name="precioProducto" id="precioProducto" value=`${producto.precio}`)
+
+                    label(for="stockProducto") Stock del producto 
+                    input(type="number" name="stockProducto" id="stockProducto" value=`${producto.stock}`)
+
+                    label(for="imagenProducto") Imagen del producto 
+                    input(type="file" name="imagenProducto" id="imagenProducto")
+
+                    button(type="submit") Editar producto
+
+
+                .fotos-editar
+                    each foto in producto.imagenes
+                        .fotos
+                            img(src=`/uploads/productos/${foto.ruta_imagen}`)
+                            button(data-id=`${foto.ruta_imagen}`) Eliminar
+
+     
+    script(type="module", src="/js/utils/admin/Actualiaradmin.js" defer)
+
+                    

@@ -1,0 +1,29 @@
+/public
+│── /css
+│   ├── _animation/      # Animaciones CSS
+│   ├── _components/     # Estilos de componentes (nav, footer, etc.)
+│   ├── _layout/         # Estilos generales (grid, flexbox, etc.)
+│   ├── _resets/         # Reset CSS
+│   ├── _variables/      # Variables CSS (colores, fuentes)
+│   ├── main.css         # Archivo CSS principal
+│
+│── /js
+│   ├── /components/     # Scripts de componentes (nav, sliders, modales, etc.)
+│   │   ├── nav.js       # Lógica del navbar
+│   │   ├── slider.js    # Carruseles de imágenes
+│   │   ├── modal.js     # Modales emergentes
+│   │
+│   ├── /pages/          # Scripts específicos de páginas
+│   │   ├── home.js      # Lógica de la página de inicio
+│   │   ├── product.js   # Lógica de la página de productos
+│   │   ├── cart.js      # Carrito de compras
+│   │
+│   ├── /utils/          # Funciones reutilizables (helpers)
+│   │   ├── format.js    # Funciones para formatear moneda, fechas, etc.
+│   │   ├── api.js       # Peticiones Fetch al backend
+│   │
+│   ├── main.js          # Script principal que importa los demás
+│
+│── /img                 # Imágenes del proyecto
+│── /fonts               # Fuentes personalizadas
+│── /uploads             # Archivos subidos por usuarios

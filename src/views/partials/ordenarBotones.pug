@@ -1,0 +1,17 @@
+article(id ="ordenarBotones")
+    section 
+        label(for="buscador") Buscar
+        input(type="text" id="buscador" placeholder="Buscar productos")
+    section
+        label(for="filtro") Filtrar
+        select(id="filtro")
+            option(value="null") Todos
+            each categoria in categorias
+                option(value=categoria.id)= categoria.nombre
+
+    section 
+        label(for="ordenar") Ordenar
+        select(id="ordenar")
+            option() Ordenar por 
+            option(value="asc") Menor precio
+            option(value="desc") Mayor precio

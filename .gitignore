@@ -1,0 +1,8 @@
+#ignirar las variables de entorno
+.env
+
+#ignorar la carpeta de los modulos de node
+node_modules/
+
+
+
