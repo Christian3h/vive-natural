@@ -42,7 +42,7 @@ router.post('/procesar-envio', async (req, res) => {
         procesarEnvio(req, res);
         
         async function procesarEnvio(req, res) {
-                console.log(req.user)
+               
           const { nombre, numero, ciudad, direccion } = req.body;
           const id_usuario = req.user.id; // Usuario autenticado
           const fecha_envio = new Date();
@@ -84,6 +84,8 @@ router.get('/procesando', async (req, res) => {
         return res.status(500).send('Hubo un error al procesar el pedido');
     }
 });
+    
+import { insertarStock } from '../models/productoModels.js';
 
 // Función para procesar el pedido
 async function procesarPedido(req, res) {
@@ -109,7 +111,7 @@ async function procesarPedido(req, res) {
 
         // 3. Insertamos los productos en la tabla 'detalle_pedido' y descontamos el stock
         for (const item of carrito) {
-                console.log(item.productoId)
+            
             // Guardar el producto en el detalle del pedido
             await pool.query(
                 `INSERT INTO detalle_pedido (id_pedido, producto_id, cantidad, precio_unitario)
@@ -118,32 +120,35 @@ async function procesarPedido(req, res) {
             );
 
             // Descontar el stock del producto
-            await pool.query(
-                `UPDATE productos SET stock = stock - ? WHERE id_producto = ?`,
-                [item.cantidad, item.productoId]
-            );
+            const cantidad = ( item.stock - item.cantidad) ;
+            const productoId = item.productoId;
+            if( cantidad < 0){
+                return res.status(400).send('No hay suficiente stock para procesar el pedido');
+            }
+            insertarStock(productoId, cantidad); // Descontar stock
         }
 
         // 4. Guardar el carrito en la tabla historial_carrito
         for (const item of carrito) {
             await pool.query(
-                `INSERT INTO historial_carrito (id_pedido, id_usuario, id_producto, nombre, descripcion, imagenes, cantidad, precio_unitario)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-                [
-                    id_pedido,
-                    id_usuario,
-                    item.productoId,
-                    item.nombre,
-                    item.descripcion,
-                    item.imagenes,
-                    item.cantidad,
-                    item.precio
-                ]
+                `INSERT INTO historial_carrito (id_pedido, id_usuario, producto_id, nombre, descripcion, imagenes, cantidad, precio_unitario)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+              
+            [
+                id_pedido,
+                id_usuario,
+                item.productoId,
+                item.nombre,
+                item.descripcion,
+                Array.isArray(item.imagenes) ? item.imagenes.join(', ') : item.imagenes,
+                item.cantidad,
+                item.precio
+            ]
             );
         }
 
         // 5. Vaciar el carrito del usuario
-        await pool.query(`DELETE FROM carrito WHERE id_usuario = ?`, [id_usuario]);
+        await pool.query(`DELETE FROM carrito_usuarios WHERE id_usuario = ?`, [id_usuario]);
 
         // 6. Redirigir a la página de confirmación
         res.redirect('/confirmacion'); // Solo se redirige al final del flujo exitoso
