@@ -49,3 +49,6 @@ export async function subCategoriaCrearAdminControllers (req, res){
         subcategorias
     })
 }
+
+// clinetes admin
+

@@ -29,18 +29,10 @@ router.get("/producto/:id", verificarAutenticacion, verificarAdmin, infoProducto
 
 router.get("/categoria/crear", verificarAutenticacion, verificarAdmin, categoriaCrearAdminControllers)
 
-// router.get('/dashboard', verificarAutenticacion, verificarAdmin, dashboardAdminControllers);
+// rutas para administrar a los clientes desde el panel del administrador 
 
-// router.get("/dashboard/:seccion", verificarAutenticacion, verificarAdmin, dashboardSeccionAdminControllers);
+import { clientesPendientesControllers } from '../../../controllers/api/admin/clientesAdminControllers.js'
 
-// 
-
-// 
-
-// 
-
-
-// router.get("/categoria/crearSub", verificarAutenticacion, verificarAdmin, subCategoriaCrearAdminControllers)
-
+router.get('/clientes/pendientes', verificarAutenticacion, verificarAdmin, clientesPendientesControllers);
 
 export default router;
