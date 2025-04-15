@@ -50,15 +50,14 @@ export async function validarProductosModels(productos) {
         }
 
         // Validar imágenes
-        try{
-           
+        try {
             const imagenesDbArray = productoExistente.imagenes_db ? productoExistente.imagenes_db.split(',') : [];
             const imagenesApiArray = imagenes ? imagenes.split(',') : [];
             if (imagenesDbArray.sort().join(',') !== imagenesApiArray.sort().join(',')) {
                 errores.push(`Las imágenes del producto ${productoId} no coinciden.`);
             }
-        }catch(e){
-            //console.log("Algo esta mal con las imagenes")
+        } catch (e) {
+            console.error("Error al comparar imágenes: ", e);
         }
     }
 
@@ -72,11 +71,16 @@ export async function obtenerDatosCorregidos(productoId) {
             p.nombre AS nombre,
             p.descripcion AS descripcion,
             MAX(pr.precio) AS precio,
-            COALESCE(stk.cantidad, 0) AS stock,
+            COALESCE(
+                (SELECT s.cantidad 
+                 FROM stock s 
+                 WHERE s.id_producto = p.id 
+                 ORDER BY s.ultima_actualizacion DESC 
+                 LIMIT 1), 
+            0) AS stock,
             GROUP_CONCAT(DISTINCT CONCAT('/uploads/productos/', i.ruta_imagen) ORDER BY i.id SEPARATOR ',') AS imagenes
         FROM productos p
         LEFT JOIN precios pr ON p.id = pr.id_producto AND pr.activo = 1
-        LEFT JOIN stock stk ON p.id = stk.id_producto
         LEFT JOIN imagenes_productos i ON p.id = i.id_producto
         WHERE p.id = UNHEX(?)
         GROUP BY p.id`,
@@ -86,9 +90,8 @@ export async function obtenerDatosCorregidos(productoId) {
     if (!result || result.length === 0) {
         return null; // Producto no encontrado
     }
-
+    
     const productoExistente = result[0];
-
     return {
         productoId: productoExistente.productoId,
         nombre: productoExistente.nombre,
@@ -102,7 +105,8 @@ export async function obtenerDatosCorregidos(productoId) {
 export async function cargarCarritoModels(carrito, userId) {
     // Eliminar todo el carrito anterior del usuario
     await pool.query(`DELETE FROM carrito_usuarios WHERE id_usuario = UNHEX(?)`, [userId]);
-    try{
+    
+    try {
         // Insertar los productos nuevos (o actualizar si ya existen)
         for (const item of carrito) {
             const { productoId, cantidad } = item;
@@ -116,7 +120,7 @@ export async function cargarCarritoModels(carrito, userId) {
         }
 
         return { ok: true, mensaje: "Carrito reemplazado correctamente" };
-    }catch(e){
+    } catch (e) {
         console.error("Error al cargar el carrito:", e);
         return { ok: false, mensaje: "Error al cargar el carrito" };
     }
@@ -136,12 +140,25 @@ export async function obtenerCarritoModels(userId) {
         FROM carrito_usuarios c
         INNER JOIN productos p ON c.id_producto = p.id
         LEFT JOIN precios pr ON p.id = pr.id_producto AND pr.activo = 1
-        LEFT JOIN stock stk ON p.id = stk.id_producto
+        LEFT JOIN (
+            SELECT id_producto, cantidad
+            FROM stock
+            WHERE (id_producto, ultima_actualizacion) IN (
+                SELECT id_producto, MAX(ultima_actualizacion)
+                FROM stock
+                GROUP BY id_producto
+            )
+        ) stk ON p.id = stk.id_producto
         LEFT JOIN imagenes_productos i ON p.id = i.id_producto
         WHERE c.id_usuario = UNHEX(?)
         GROUP BY c.id_producto`,
         [userId]
     );
+
+    // Verificar si hay productos
+    if (!rows || rows.length === 0) {
+        return { ok: false, mensaje: "No se encontraron productos en el carrito." };
+    }
 
     return rows.map(producto => ({
         productoId: producto.productoId,
@@ -153,5 +170,3 @@ export async function obtenerCarritoModels(userId) {
         stock: Number(producto.stock)
     }));
 };
-
-

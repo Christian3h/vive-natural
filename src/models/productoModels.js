@@ -57,23 +57,31 @@ const listarProductos = async (id_categoria, id_subcategoria) => {
             HEX(p.id) AS producto_id_hex,
             p.nombre AS producto_nombre,
             p.descripcion AS producto_descripcion,
-            COALESCE(stk.cantidad, 0) AS producto_stock,  -- ✅ Evita valores NULL en stock
+            COALESCE(
+                (SELECT s.cantidad 
+                 FROM stock s 
+                 WHERE s.id_producto = p.id 
+                 ORDER BY s.ultima_actualizacion DESC 
+                 LIMIT 1), 
+            0) AS producto_stock,
             p.id_categoria AS producto_categoria,  
             p.id_subcategoria AS producto_subcategoria,
             c.nombre AS categoria_nombre,
             s.nombre AS subcategoria_nombre,
-            MAX(pr.precio) AS precio_activo,  -- ✅ Asegura que no haya problemas con GROUP BY
-            GROUP_CONCAT(CONCAT('/uploads/productos/', i.ruta_imagen) ORDER BY i.id SEPARATOR ', ') AS imagenes
+            MAX(pr.precio) AS precio_activo,
+            GROUP_CONCAT(DISTINCT CONCAT('/uploads/productos/', i.ruta_imagen) ORDER BY i.id SEPARATOR ', ') AS imagenes
         FROM productos p
         JOIN categoria c ON p.id_categoria = c.id
         LEFT JOIN subcategoria s ON p.id_subcategoria = s.id
         LEFT JOIN precios pr ON p.id = pr.id_producto AND pr.activo = 1  
         LEFT JOIN imagenes_productos i ON p.id = i.id_producto
-        LEFT JOIN stock stk ON p.id = stk.id_producto
         WHERE 
-            (IFNULL(?, p.id_categoria) = p.id_categoria)  -- ✅ Manejo correcto de valores NULL
+            (IFNULL(?, p.id_categoria) = p.id_categoria)
             AND (IFNULL(?, p.id_subcategoria) = p.id_subcategoria)  
-        GROUP BY p.id, p.nombre, p.descripcion, p.id_categoria, p.id_subcategoria, c.nombre, s.nombre
+        GROUP BY 
+            p.id, p.nombre, p.descripcion, 
+            p.id_categoria, p.id_subcategoria, 
+            c.nombre, s.nombre
         ORDER BY p.fecha_creacion DESC;
         `,
         [id_categoria, id_subcategoria]

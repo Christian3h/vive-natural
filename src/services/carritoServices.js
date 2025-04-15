@@ -29,7 +29,6 @@ export async function validarStockCarritoServices(carrito) {
 
         carritoCorregido.push(productoCorregido);
     }
-
     return { valid: true, carrito: carritoCorregido };
 };
 
