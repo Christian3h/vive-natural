@@ -31,8 +31,10 @@ router.get("/categoria/crear", verificarAutenticacion, verificarAdmin, categoria
 
 // rutas para administrar a los clientes desde el panel del administrador 
 
-import { clientesPendientesControllers } from '../../../controllers/api/admin/clientesAdminControllers.js'
+import { clientesPendientesControllers,clientesPendientesListarControllers } from '../../../controllers/api/admin/clientesAdminControllers.js'
 
 router.get('/clientes/pendientes', verificarAutenticacion, verificarAdmin, clientesPendientesControllers);
+
+router.get('/clientes/pendientes' , verificarAutenticacion, verificarAdmin, clientesPendientesListarControllers);
 
 export default router;
