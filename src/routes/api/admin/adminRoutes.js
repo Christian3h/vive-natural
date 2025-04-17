@@ -35,6 +35,36 @@ import { clientesPendientesControllers,clientesPendientesListarControllers } fro
 
 router.get('/clientes/pendientes', verificarAutenticacion, verificarAdmin, clientesPendientesControllers);
 
-router.get('/clientes/pendientes' , verificarAutenticacion, verificarAdmin, clientesPendientesListarControllers);
+router.post('/clientes/pendientes' , verificarAutenticacion, verificarAdmin, clientesPendientesListarControllers);
+
+import pool from "../../../models/bd.js";
+
+router.put('/clientes/estado-modificar', verificarAdmin, async (req, res) => {
+        try {
+            const { id_usuario, estado } = req.body;
+    
+            // Validar datos
+            if (!id_usuario || !['aprobado', 'rechazado'].includes(estado)) {
+                return res.status(400).json({ error: 'Datos inválidos' });
+            }
+    
+            // Actualizar en la base de datos
+            const [result] = await pool.query(
+                'UPDATE usuarios_aprobacion SET estado = ? WHERE id_usuario = UNHEX(?)',
+                [estado, id_usuario.replace(/-/g, '')]
+            );
+    
+            if (result.affectedRows === 0) {
+                return res.status(404).json({ error: 'Cliente no encontrado' });
+            }
+    
+            res.json({ mensaje: `Estado actualizado a ${estado}` });
+    
+        } catch (error) {
+            console.error('Error en la ruta /estado:', error);
+            res.status(500).json({ error: 'Error interno del servidor' });
+        }
+    });
+    
 
 export default router;

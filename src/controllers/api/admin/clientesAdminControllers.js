@@ -1,3 +1,4 @@
+import { obtenerClientesPendientesServices } from "../../../services/api/clientesServices.js";
 
 export async function clientesPendientesControllers(req, res) {
     res.render('admin/clientes/clientesPendientes', {
@@ -6,7 +7,11 @@ export async function clientesPendientesControllers(req, res) {
 }
 
 export async function clientesPendientesListarControllers(req, res){
-    res.send({
-        message: "Listar clientes pendientes"
-    });
+   const clientesPendientes = await obtenerClientesPendientesServices();
+   if(clientesPendientes){
+       res.json({
+           status: true,
+           clientesPendientes
+       }); 
+    }
 }

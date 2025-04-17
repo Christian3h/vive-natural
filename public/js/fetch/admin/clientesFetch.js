@@ -13,3 +13,28 @@ export async function obtenerClientesPendientes() {
         return null;
     }
 }
+
+export async function actualizarEstadoCliente(id, accion) {
+    try {
+        const response = await fetch('/api/admin/clientes/estado-modificar', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify({
+                id_usuario: id,
+                estado: accion // 'aprobado' o 'rechazado'
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error(await response.text());
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Error al actualizar estado:', error);
+        throw error;
+    }
+}
