@@ -25,12 +25,12 @@ export function botonesClientesUtils() {
                 // Eliminar después de la animación
                 setTimeout(() => {
                     clienteDiv.remove();
-                    mostrarNotificacion(`Cliente ${accion} correctamente`, 'success');
+                   // mostrarNotificacion(`Cliente ${accion} correctamente`, 'success');
                 }, 300);
             }
         } catch (error) {
             console.error('Error:', error);
-            mostrarNotificacion('Error al procesar la solicitud', 'error');
+            //mostrarNotificacion('Error al procesar la solicitud', 'error');
         }
     });
 }

@@ -9,24 +9,72 @@ html(lang="es")
         // menu de administrador
         include ../../partials/menuAdmin.pug
         main 
-            article
-                h1 Clientes pendientes
-            article#clientesPendientesContainer
+            article 
+                div.admin-clientes-container
+                .tabs
+                    button.tab-btn.active(data-tab="pendiente") Pendientes
+                    button.tab-btn(data-tab="aprobado") Aprobados
+                    button.tab-btn(data-tab="rechazado") Rechazados/Bloqueados
 
+                .tab-content.active#clientes-pendiente-container
+                .tab-content#clientes-aprobado-container
+                .tab-content#clientes-rechazado-container
+
+        //- Script en Pug
+        
+
+        //- CSS en Pug
         style.
-            .cliente{
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                padding: 10px;
-                border-bottom: 1px solid #ccc;
+            .admin-clientes-container {
+                max-width: 1200px;
+                margin: 0 auto;
             }
 
-            .cliente img{
-                width: 50px;
-                height: 50px;
-                border-radius: 50%;
+            .tabs {
+                display: flex;
+                margin-bottom: 20px;
+                border-bottom: 1px solid #ddd;
             }
+
+            .tab-btn {
+                padding: 10px 20px;
+                background: none;
+                border: none;
+                cursor: pointer;
+                font-size: 16px;
+                border-bottom: 3px solid transparent;
+            }
+
+            .tab-btn.active {
+                border-bottom-color: #5A60FF;
+                font-weight: bold;
+            }
+
+            .tab-content {
+                display: none;
+            }
+
+            .tab-content.active {
+                display: block;
+            }
+
+            .cliente {
+                margin-bottom: 15px;
+                transition: all 0.3s ease;
+            }
+
+            .cliente-aprobado {
+                border-left: 4px solid #28a745;
+            }
+
+            .cliente-rechazado, .cliente-bloqueado {
+                border-left: 4px solid #dc3545;
+            }
+
+            .cliente-pendiente {
+                border-left: 4px solid #ffc107;
+            }
+
 
         script(type="module", src="/js/pages/admin/clientesAdminPages.js") 
                 

@@ -14,9 +14,27 @@ export async function obtenerClientesPendientes() {
     }
 }
 
+export async function obtenerClientes(accion){
+    try {
+        const response = await fetch('/sesion/admin/clientes/consulta', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({
+                estado: accion
+            })
+        });
+        if (!response.ok) throw new Error(`Error en la solicitud: ${response.status} - ${response.statusText}`);
+        return await response.json();
+    } catch (error) {
+        console.error('Error al obtener producto:', error.message);
+        return null;
+    }
+}
+
 export async function actualizarEstadoCliente(id, accion) {
     try {
-        const response = await fetch('/api/admin/clientes/estado-modificar', {
+        const response = await fetch('/sesion/admin/clientes/estado-modificar', {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',

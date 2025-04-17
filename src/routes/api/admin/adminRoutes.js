@@ -31,11 +31,13 @@ router.get("/categoria/crear", verificarAutenticacion, verificarAdmin, categoria
 
 // rutas para administrar a los clientes desde el panel del administrador 
 
-import { clientesPendientesControllers,clientesPendientesListarControllers } from '../../../controllers/api/admin/clientesAdminControllers.js'
+import { clientesPendientesControllers,clientesPendientesListarControllers, clientesListarControllers } from '../../../controllers/api/admin/clientesAdminControllers.js'
 
 router.get('/clientes/pendientes', verificarAutenticacion, verificarAdmin, clientesPendientesControllers);
 
 router.post('/clientes/pendientes' , verificarAutenticacion, verificarAdmin, clientesPendientesListarControllers);
+
+router.post('/clientes/consulta', verificarAutenticacion ,verificarAdmin, clientesListarControllers)
 
 import pool from "../../../models/bd.js";
 
