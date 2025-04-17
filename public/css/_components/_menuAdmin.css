@@ -81,3 +81,10 @@ li:hover > .submenu {
 #menu-user img{
     border-radius: 50%;
 }
+
+@media (max-width:700px){
+    header{
+       display: none;
+    }
+} 
+    

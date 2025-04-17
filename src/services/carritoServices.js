@@ -4,9 +4,15 @@ export async function validarStockCarritoServices(carrito) {
     if (!Array.isArray(carrito)) {
         return { valid: false, message: 'Carrito no válido' };
     }
+    let validacion;
+    try{
+        // Validar todos los productos en una sola consulta
+        validacion = await validarProductosModels(carrito);
+       
+    }catch (error) {
+        console.error('Error al validar el carrito:', error);
+    }
 
-    // Validar todos los productos en una sola consulta
-    const validacion = await validarProductosModels(carrito);
     let carritoCorregido = [];
 
     for (const producto of carrito) {
