@@ -1,4 +1,4 @@
-import { obtenerClientesPendientesServices } from "../../../services/api/clientesServices.js";
+import { obtenerClientesPendientesServices , obtenerListaClientes} from "../../../services/api/clientesServices.js";
 
 export async function clientesPendientesControllers(req, res) {
     res.render('admin/clientes/clientesPendientes', {
@@ -14,4 +14,15 @@ export async function clientesPendientesListarControllers(req, res){
            clientesPendientes
        }); 
     }
+}
+
+export async function clientesListarControllers(req, res){
+    const estado = req.body.estado;
+    const clientesPendientes = await obtenerListaClientes(estado);
+    if(clientesPendientes){
+        res.json({
+            status: true,
+            clientesPendientes
+        }); 
+     }
 }
