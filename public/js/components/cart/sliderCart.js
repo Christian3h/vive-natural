@@ -29,7 +29,6 @@ export function initSlider() {
         }
   
         if (e.target.id === 'btn-prev') {
-          console.log('click');
           currentIndex = (currentIndex - 1 + slides.length) % slides.length;
           showSlide(currentIndex);
         }

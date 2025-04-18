@@ -138,9 +138,10 @@ export async function cargarCarritoAlIniciarSesion() {
     const carritoMap = new Map();
     let carritoFinal;
 
-    // Agregar backend
-    carritoBackend.forEach(p => carritoMap.set(p.productoId, { ...p }));
-
+    if (Array.isArray(carritoBackend)) {
+        carritoBackend.forEach(p => carritoMap.set(p.productoId, { ...p }));
+    }
+    
     // Fusionar local
     carritoValidado.forEach(p => {
         if (carritoMap.has(p.productoId)) {

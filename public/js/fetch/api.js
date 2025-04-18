@@ -29,7 +29,7 @@ export async function obtenerProducto(id) {
 }
 
 export async function validarStockCarritoFetch(carrito) {
-    console.log(carrito)
+    
     try {
         const response = await fetch('/api/carrito/validar-stock', {
             method: 'POST',
@@ -37,7 +37,6 @@ export async function validarStockCarritoFetch(carrito) {
             body: JSON.stringify(carrito)
         });
         if (!response.ok) throw new Error(`Error en la solicitud: ${response.status} - ${response.statusText}`);
-        console.log('Respuesta de la validación de stock:', response);
         return await response.json();
     } catch (error) {
         console.error('Error al validar stock:', error.message);

@@ -79,39 +79,68 @@ router.get('/pedidos/', verificarAutenticacion, verificarAdmin, async (req, res)
 
 
 //consultas para hacer eso iria mas del lado de la api todo lo que valla del lado de la api lo voy a comentar con api
-router.get('/pedidos/pendientes', /*verificarAutenticacion, verificarAdmin,*/ async (req, res) => {
+router.get('/pedidos/pendientes', verificarAutenticacion, verificarAdmin, async (req, res) => {
     try {
         const [result] = await pool.query(`
-            SELECT 
-                p.id_pedido,
-                p.fecha_creacion,
-                p.metodo_pago,
-                p.cuotas,
-                p.fecha_limite,
-                p.comentarios,
-                u.name AS nombre_cliente,
-                u.profile_picture,
-                SUM(dp.cantidad * dp.precio_unitario) AS total,
-                p.estado,
-                e.ciudad,
-                e.direccion,
-                e.numero AS telefono_contacto
-            FROM 
-                pedidos p
-            JOIN 
-                usuarios u ON HEX(u.id) = p.id_usuario
-            JOIN 
-                detalle_pedido dp ON p.id_pedido = dp.id_pedido
-            LEFT JOIN 
-                envios e ON p.id_envio = e.id_envio
-            WHERE 
-                p.estado = 'pendiente'
-            GROUP BY 
-                p.id_pedido, p.fecha_creacion, p.metodo_pago, p.cuotas, p.fecha_limite, p.comentarios,
-                u.name, u.profile_picture, p.estado,
-                e.ciudad, e.direccion, e.numero
-            ORDER BY 
-                p.fecha_creacion DESC;
+           SELECT 
+    p.id_pedido,
+    p.fecha_creacion,
+    p.metodo_pago,
+    p.cuotas,
+    p.fecha_limite,
+    p.comentarios,
+    u.name AS nombre_cliente,
+    u.profile_picture,
+    SUM(dp.cantidad * dp.precio_unitario) AS total,
+    p.estado,
+    e.ciudad,
+    e.direccion,
+    e.numero AS telefono_contacto,
+    GROUP_CONCAT(
+        CONCAT(
+            'Producto: ', pr.nombre, 
+            ', Cantidad: ', dp.cantidad, 
+            ', Precio: $', pe.precio -- Cambié de 'dp.precio_unitario' a 'pe.precio' para acceder a la tabla 'precios'
+        ) 
+        SEPARATOR ' | '
+    ) AS detalles_productos, -- Concatenar detalles del producto
+    GROUP_CONCAT(
+        pr.nombre
+        SEPARATOR ', '
+    ) AS productos, -- Lista de nombres de productos
+    GROUP_CONCAT(
+        pe.precio -- Usamos 'pe.precio' para acceder al precio en la tabla 'precios'
+        SEPARATOR ', '
+    ) AS precios, -- Lista de precios de los productos desde la tabla 'precios'
+    GROUP_CONCAT(
+        pr.id
+        SEPARATOR ', '
+    ) AS ids_productos -- Lista de ids de los productos
+FROM 
+    pedidos p
+JOIN 
+    usuarios u ON HEX(u.id) = p.id_usuario
+JOIN 
+    detalle_pedido dp ON p.id_pedido = dp.id_pedido
+LEFT JOIN 
+    envios e ON p.id_envio = e.id_envio
+JOIN 
+    productos pr ON dp.producto_id = pr.id
+LEFT JOIN 
+    categoria cat ON pr.id_categoria = cat.id
+LEFT JOIN 
+    subcategoria subcat ON pr.id_subcategoria = subcat.id
+JOIN 
+    precios pe ON dp.producto_id = pe.id_producto -- Nos aseguramos de hacer JOIN con la tabla 'precios'
+WHERE 
+    p.estado = 'pendiente'
+GROUP BY 
+    p.id_pedido, p.fecha_creacion, p.metodo_pago, p.cuotas, p.fecha_limite, p.comentarios,
+    u.name, u.profile_picture, p.estado,
+    e.ciudad, e.direccion, e.numero
+ORDER BY 
+    p.fecha_creacion DESC;
+
 
         `);
         res.json(result);
@@ -136,11 +165,11 @@ router.put('/pedidos/:id/estado', verificarAutenticacion, verificarAdmin, async 
                 error: 'El estado debe ser: pendiente, entregado o cancelado'
             });
         }
-
+        let pedidoActual
         // Si el pedido se va a cancelar, primero obtenemos los detalles
         if (estado === 'cancelado') {
             // 1. Obtener los detalles del pedido actual
-            const [pedidoActual] = await pool.query(
+            [pedidoActual] = await pool.query(
                 'SELECT estado FROM pedidos WHERE id_pedido = ?',
                 [id]
             );
@@ -189,12 +218,6 @@ router.put('/pedidos/:id/estado', verificarAutenticacion, verificarAdmin, async 
                 error: `No se encontró el pedido con ID ${id}`
             });
         }
-
-        // Registrar el cambio en el historial
-        await pool.query(
-            'INSERT INTO historial_pedidos (id_pedido, estado_anterior, estado_nuevo, fecha_cambio) VALUES (?, ?, ?, NOW())',
-            [id, pedidoActual[0].estado, estado]
-        );
 
         res.json({ 
             mensaje: `Pedido #${id} actualizado a "${estado}" correctamente`,

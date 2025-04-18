@@ -57,7 +57,7 @@ export async function validarProductosModels(productos) {
                 errores.push(`Las imágenes del producto ${productoId} no coinciden.`);
             }
         } catch (e) {
-            console.error("Error al comparar imágenes: ", e);
+            //console.error("Error al comparar imágenes: ", e);
         }
     }
 

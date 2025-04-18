@@ -18,6 +18,12 @@ export async function insertarCantidadCarrito() {
 
  insertarCantidadCarrito();
 
+try {
+    cargarCarritoAlIniciarSesion();
+} catch (e) {
+    console.log('mi chino error')
+}
+
 
 const menuToggle = document.getElementById('menu-toggle');
 let menu = true;

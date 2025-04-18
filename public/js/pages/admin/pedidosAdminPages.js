@@ -21,7 +21,6 @@ async function obtenerPedidosPendientes() {
         } else {
             renderNoPedidosPendientes();
         }
-        console.log(data)
         return data;
     } catch (error) {
         c
@@ -42,11 +41,49 @@ function renderError(message) {
 }
 
 // Función para renderizar los pedidos pendientes
-// Función para renderizar los pedidos pendientes
 function renderPedidosPendientes(pedidos) {
     const container = document.getElementById('pedidos-container');
     container.innerHTML = '';  // Limpiar contenedor
+
     pedidos.forEach(pedido => {
+        // Agrupar productos por nombre y sumar las cantidades
+        const productosAgrupados = {};
+        const nombresProductos = pedido.productos.split(', '); // Convertir la lista de productos en un arreglo
+        const detallesProductos = pedido.detalles_productos.split(' | '); // Convertir los detalles del producto en un arreglo
+        const precios = pedido.precios.split(', '); // Convertir los precios en un arreglo
+
+        // Recorremos los detalles de los productos y agrupamos por nombre
+        nombresProductos.forEach((producto, index) => {
+            // Extraer la cantidad del detalle del producto
+            const cantidadStr = detallesProductos[index].split(', ')[1]; // "Cantidad: X"
+            const cantidad = parseInt(cantidadStr.split(': ')[1]); // Extraemos el número de la cantidad
+
+            // Verificar si la cantidad es un número válido
+            if (isNaN(cantidad)) {
+                console.error(`Error: La cantidad para el producto "${producto}" no es válida.`);
+                return; // Saltar este producto si la cantidad no es válida
+            }
+
+            // Agrupar por producto y sumar la cantidad
+            if (productosAgrupados[producto]) {
+                productosAgrupados[producto].cantidad += cantidad; // Sumar la cantidad
+            } else {
+                productosAgrupados[producto] = {
+                    cantidad: cantidad,
+                    precio: precios[index], // Guardamos el precio
+                    detalle: detallesProductos[index] // Guardamos el detalle para mostrar
+                };
+            }
+        });
+
+        // Ahora podemos crear el HTML con los productos agrupados
+        let productosHtml = '';
+        Object.keys(productosAgrupados).forEach(producto => {
+            const info = productosAgrupados[producto];
+            productosHtml += `
+                <p>Producto: ${producto}, Cantidad: ${info.cantidad}, Precio: $${info.precio}</p>
+            `;
+        });
 
         const pedidoElement = document.createElement('div');
         pedidoElement.className = 'pedido-card';
@@ -88,6 +125,11 @@ function renderPedidosPendientes(pedidos) {
                 </div>
             ` : ''}
 
+            <div class="productos-lista">
+                <h4>Productos:</h4>
+                ${productosHtml}
+            </div>
+
             <div class="btn-container">
                 <button class="btn btn-entregar")">
                     <i class="fas fa-check"></i> Pedido Entregado
@@ -104,7 +146,6 @@ function renderPedidosPendientes(pedidos) {
 
         btnEntregar.addEventListener('click', () => marcarPedido(pedido.id_pedido, 'entregado'));
         btnCancelar.addEventListener('click', () => marcarPedido(pedido.id_pedido, 'cancelado'));
-
 
         container.appendChild(pedidoElement);
     });
