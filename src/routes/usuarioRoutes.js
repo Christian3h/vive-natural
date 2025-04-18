@@ -87,77 +87,89 @@ router.get('/procesando', async (req, res) => {
     
 import { insertarStock } from '../models/productoModels.js';
 
-// Función para procesar el pedido
 async function procesarPedido(req, res) {
     const id_usuario = req.user.id;
     const { metodo, cuotas, fecha } = req.query;
-    const fechaLimite = (fecha && fecha !== 'null') ? fecha : null; // Ajustar fecha para evitar error de 'null' como cadena
+    const fechaLimite = (fecha && fecha !== 'null') ? fecha : null;
 
     try {
-        // 1. Consultamos el carrito del usuario
+        // 1. Obtener productos del carrito
         const carrito = await obtenerCarritoModels(id_usuario);
-
         if (!carrito || carrito.length === 0) {
-            return res.redirect('/carrito'); // Si no hay productos en el carrito, redirigimos
+            return res.redirect('/carrito');
         }
 
-        // 2. Insertamos en la tabla 'pedidos' el nuevo pedido
+        // 2. Obtener el ID del envío del usuario (asumimos que hay uno activo por usuario)
+        const [envioRows] = await pool.query(
+            `SELECT id_envio 
+             FROM envios 
+             WHERE id_usuario = UNHEX(?) 
+             ORDER BY fecha_envio DESC 
+             LIMIT 1`,
+            [id_usuario.replace(/-/g, '')]
+        );
+
+        if (envioRows.length === 0) {
+            return res.status(400).send('No se encontró información de envío para el usuario.');
+        }
+
+        const id_envio = envioRows[0].id_envio;
+
+        // 3. Insertar el pedido con el id_envio
         const [pedidoResult] = await pool.query(
-            `INSERT INTO pedidos (id_usuario, metodo_pago, cuotas, fecha_limite, fecha_creacion, estado)
-            VALUES (?, ?, ?, ?, NOW(), 'pendiente')`,
-            [id_usuario, metodo, cuotas || null, fechaLimite]
+            `INSERT INTO pedidos (id_usuario, id_envio, metodo_pago, cuotas, fecha_limite, fecha_creacion, estado)
+             VALUES (?, ?, ?, ?, ?, NOW(), 'pendiente')`,
+            [id_usuario, id_envio, metodo, cuotas || null, fechaLimite]
         );
         const id_pedido = pedidoResult.insertId;
 
-        // 3. Insertamos los productos en la tabla 'detalle_pedido' y descontamos el stock
+        // 4. Insertar productos en detalle_pedido y descontar stock
         for (const item of carrito) {
-            
-            // Guardar el producto en el detalle del pedido
+            const productoIdBuffer = Buffer.from(item.productoId, 'hex');
+
             await pool.query(
                 `INSERT INTO detalle_pedido (id_pedido, producto_id, cantidad, precio_unitario)
-                VALUES (?, ?, ?, ?)`,
-                [id_pedido, item.productoId, item.cantidad, item.precio]
+                 VALUES (?, ?, ?, ?)`,
+                [id_pedido, productoIdBuffer, item.cantidad, item.precio]
             );
 
-            // Descontar el stock del producto
-            const cantidad = ( item.stock - item.cantidad) ;
-            const productoId = item.productoId;
-            if( cantidad < 0){
+            const nuevoStock = item.stock - item.cantidad;
+            if (nuevoStock < 0) {
                 return res.status(400).send('No hay suficiente stock para procesar el pedido');
             }
-            insertarStock(productoId, cantidad); // Descontar stock
+            await insertarStock(item.productoId, nuevoStock);
         }
 
-        // 4. Guardar el carrito en la tabla historial_carrito
+        // 5. Guardar historial del carrito
         for (const item of carrito) {
             await pool.query(
                 `INSERT INTO historial_carrito (id_pedido, id_usuario, producto_id, nombre, descripcion, imagenes, cantidad, precio_unitario)
                  VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-              
-            [
-                id_pedido,
-                id_usuario,
-                item.productoId,
-                item.nombre,
-                item.descripcion,
-                Array.isArray(item.imagenes) ? item.imagenes.join(', ') : item.imagenes,
-                item.cantidad,
-                item.precio
-            ]
+                [
+                    id_pedido,
+                    id_usuario,
+                    item.productoId,
+                    item.nombre,
+                    item.descripcion,
+                    Array.isArray(item.imagenes) ? item.imagenes.join(', ') : item.imagenes,
+                    item.cantidad,
+                    item.precio
+                ]
             );
         }
 
-        // 5. Vaciar el carrito del usuario
+        // 6. Vaciar el carrito
         await pool.query(`DELETE FROM carrito_usuarios WHERE id_usuario = ?`, [id_usuario]);
 
-        // 6. Redirigir a la página de confirmación
-        res.redirect('/confirmacion'); // Solo se redirige al final del flujo exitoso
+        // 7. Redirigir
+        res.redirect('/confirmacion');
 
     } catch (error) {
         console.error("Error al procesar el pedido:", error);
-        return res.status(500).send("Error al procesar el pedido"); // Solo respondemos una vez
+        return res.status(500).send("Error al procesar el pedido");
     }
 }
+
 
 
 export default router

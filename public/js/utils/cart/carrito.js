@@ -9,7 +9,16 @@ import {
 import { insertarCantidadCarrito } from '../../components/nav.js';
 
 function getCarritoLocal() {
-    return JSON.parse(localStorage.getItem("carrito")) || [];
+    const raw = localStorage.getItem("carrito");
+    if (!raw || raw === "undefined" || raw === "null") return [];
+
+    try {
+        return JSON.parse(raw);
+    } catch (e) {
+        console.warn("Carrito corrupto en localStorage, limpiando...");
+        localStorage.removeItem("carrito");
+        return [];
+    }
 }
 
 function setCarritoLocal(carrito) {
@@ -55,7 +64,7 @@ export async function obtenerCarrito() {
 
 // Cargar carrito a la base de datos si el usuario está logueado
 export async function cargarCarrito() {
-    validarStockCarrito()
+    await validarStockCarrito(); // ahora sí esperamos la validación
     const carrito = getCarritoLocal();
     const logueado = await estaLogueado();
 
@@ -72,6 +81,7 @@ export async function cargarCarrito() {
         return carrito;
     }
 }
+
 
 // Eliminar producto del carrito
 export async function eliminarProductoDelCarrito(id) {
@@ -115,39 +125,34 @@ export async function cargarCarritoAlIniciarSesion() {
         return getCarritoLocal();
     }
 
-    // 1. Obtener carrito del backend
     let carritoBackend = [];
     try {
-        carritoBackend = await consultarCarritoFechtch(); // tu nueva función
+        carritoBackend = await consultarCarritoFechtch();
     } catch (error) {
         console.error("Error obteniendo carrito backend:", error);
     }
 
-    // 2. Obtener y validar el local
     const carritoLocal = getCarritoLocal();
     const carritoValidado = (await validarStockCarritoFetch(carritoLocal))?.carrito || [];
 
-    // 3. Fusionar carritos (prioriza mayor cantidad)
     const carritoMap = new Map();
+    let carritoFinal;
 
     // Agregar backend
-    carritoBackend.forEach(p => {
-        carritoMap.set(p.productoId, { ...p });
-    });
+    carritoBackend.forEach(p => carritoMap.set(p.productoId, { ...p }));
 
     // Fusionar local
     carritoValidado.forEach(p => {
         if (carritoMap.has(p.productoId)) {
             const producto = carritoMap.get(p.productoId);
-            producto.cantidad = Math.max(producto.cantidad, p.cantidad); // <<< Elegí qué regla querés aplicar
+            producto.cantidad = Math.max(producto.cantidad, p.cantidad);
         } else {
             carritoMap.set(p.productoId, { ...p });
         }
     });
 
-    const carritoFinal = Array.from(carritoMap.values());
+    carritoFinal = Array.from(carritoMap.values());
 
-    // 4. Subir al backend y guardar local
     try {
         await cargarCarritoFetch(carritoFinal);
         setCarritoLocal(carritoFinal);
@@ -155,9 +160,27 @@ export async function cargarCarritoAlIniciarSesion() {
         console.error("Error subiendo carrito combinado:", error);
     }
 
-    // 5. Mostrar en frontend
     await insertarCarrito();
-    await insertarCantidadCarrito(); // actualizar nav
-
+    await insertarCantidadCarrito();
     return carritoFinal;
+}
+
+
+export async function vaciarCarritoCompleto() {
+    // 1. Borrar del localStorage
+    localStorage.removeItem("carrito");
+
+    // 2. Borrar del backend (si está logueado)
+    const logueado = await estaLogueado();
+    if (logueado) {
+        try {
+            await cargarCarritoFetch([]); // envia carrito vacío
+        } catch (error) {
+            console.error("Error al vaciar carrito en backend:", error);
+        }
+    }
+
+    // 3. Actualizar UI
+    await insertarCarrito();
+    await insertarCantidadCarrito();
 }

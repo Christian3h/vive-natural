@@ -8,7 +8,6 @@ export async function validarStockCarritoServices(carrito) {
     try{
         // Validar todos los productos en una sola consulta
         validacion = await validarProductosModels(carrito);
-       
     }catch (error) {
         console.error('Error al validar el carrito:', error);
     }
