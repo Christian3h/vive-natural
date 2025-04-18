@@ -24,7 +24,7 @@ passport.use(new GoogleStrategy({
 
             await pool.query(
                 'INSERT INTO usuarios (id, google_id, name, email, profile_picture, rol) VALUES (?, ?, ?, ?, ?, ?)',
-                [uuidBinary, profile.id, profile.displayName, profile.emails[0].value, profile.photos[0].value, 'user']
+                [uuidBinary, profile.id, profile.displayName, profile.emails[0].value, profile.photos[0].value, 'usuario']
             )
 
             const newUser = {

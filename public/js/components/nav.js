@@ -1,4 +1,4 @@
-import { obtenerCarrito } from "../utils/cart/carrito.js"; 
+import { obtenerCarrito, cargarCarritoAlIniciarSesion} from "../utils/cart/carrito.js"; 
 const carritoElemento = document.getElementById('carrito-cantidad');
 const carritoElementoM = document.getElementById('carrito-cantidadM');
 

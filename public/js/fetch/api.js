@@ -29,6 +29,7 @@ export async function obtenerProducto(id) {
 }
 
 export async function validarStockCarritoFetch(carrito) {
+    console.log(carrito)
     try {
         const response = await fetch('/api/carrito/validar-stock', {
             method: 'POST',
