@@ -20,6 +20,9 @@ html(lang="es")
                     label(for="precio") Precio del producto
                     input( required type="number", name="precio", placeholder="Precio del producto")
 
+                    label(for="costo") costo del producto
+                    input( required type="number", name="costo", placeholder="costo del producto")
+
                     label(for="stock") Stock del producto
                     input( required type="number", name="stock", placeholder="Stock del producto")
 
@@ -36,7 +39,7 @@ html(lang="es")
                             option(value=`${subcategoria.id}`) #{subcategoria.nombre}
 
                     label(for="imagen") Imagenes del producto
-                    input( required type="file", name="imagen", accept="image/*")
+                    input( required type="file", name="imagen", accept="image/*" multiple)
 
                     button(type="submit") Crear producto
 

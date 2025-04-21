@@ -132,7 +132,7 @@ function renderPedidosPendientes(pedidos) {
 
             <div class="btn-container">
                 <button class="btn btn-entregar")">
-                    <i class="fas fa-check"></i> Pedido Entregado
+                    <i class="fas fa-check"></i> Pedido aprobado
                 </button>
                 <button class="btn btn-cancelar")">
                     <i class="fas fa-times"></i> Cancelar Pedido
@@ -144,7 +144,7 @@ function renderPedidosPendientes(pedidos) {
         const btnEntregar = pedidoElement.querySelector('.btn-entregar');
         const btnCancelar = pedidoElement.querySelector('.btn-cancelar');
 
-        btnEntregar.addEventListener('click', () => marcarPedido(pedido.id_pedido, 'entregado'));
+        btnEntregar.addEventListener('click', () => marcarPedido(pedido.id_pedido, 'aprobado'));
         btnCancelar.addEventListener('click', () => marcarPedido(pedido.id_pedido, 'cancelado'));
 
         container.appendChild(pedidoElement);

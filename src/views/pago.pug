@@ -45,12 +45,19 @@ html(lang="es")
 
                         label(for="fechaLimite")
                             | Fecha límite de pago por mes:
+                            div(class="tooltip-container" tabindex="0" )
+                              span(class="tooltip-icon") ❓
+                              div(class="tooltip-text")
+                                p La fecha límite indica el día máximo de cada mes en el que debes pagar tu cuota. No puedes pasarte de esa fecha. El año mostrado es solo referencial y no influye en los pagos.
+                            
                             input(type="date", name="fecha_limite", id="fechaLimite")
 
                     .acciones
                         button.btn(type="submit") Confirmar
                         button.btn#cancelarModal(type="button") Cancelar
 
+
+               
 
 
     script(type="module", src="/js/pages/pagoPages.js")
@@ -144,3 +151,46 @@ html(lang="es")
         .oculto {
         display: none;
         }
+         .tooltip-container {
+          position: relative;
+          display: inline-block;
+          cursor: pointer;
+        }
+
+        .tooltip-text {
+          visibility: hidden;
+          background-color: #333;
+          color: #fff;
+          text-align: left;
+          padding: 8px;
+          border-radius: 8px;
+          position: absolute;
+          z-index: 1;
+          width: 200px;
+          bottom: 125%; /* arriba del icono */
+          left: 50%;
+          transform: translateX(-50%);
+          opacity: 0;
+          transition: opacity 0.3s ease;
+        }
+
+        .tooltip-container:hover .tooltip-text,
+        .tooltip-container:focus-within .tooltip-text,
+        .tooltip-container.show .tooltip-text {
+          visibility: visible;
+          opacity: 1;
+        }
+
+        .tooltip-icon {
+          background: #eee;
+          border-radius: 50%;
+          padding: 4px 8px;
+          font-weight: bold;
+          font-size: 14px;
+          user-select: none;
+        }
+
+    //esto es un comentario
+
+
+

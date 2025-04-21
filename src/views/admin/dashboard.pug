@@ -1,13 +1,45 @@
 doctype html
 html(lang="es")
-    head
-        meta(charset="UTF-8")
-        meta(name="viewport", content="width=device-width, initial-scale=1.0")
-        title Vive natural 
-        link(rel="stylesheet", href="/css/main/dashboard.css")
-    body 
-        // menu de administrador
-        include ../partials/menuAdmin.pug
-        main 
-            article 
-                h1 finanzas 
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    title Finanzas - Vive Natural
+    link(rel="stylesheet", href="/css/main/dashboard.css")
+    script(src="https://www.gstatic.com/charts/loader.js")
+  body 
+    include ../partials/menuAdmin.pug
+    
+    main
+      article
+        h1 Finanzas
+        
+        .chart-grid(style="display: grid; grid-template-columns: repeat(auto-fill, minmax(500px, 1fr)); gap: 2rem; margin-top: 2rem;")
+          #chart-ventas-mes.chart-item
+          #chart-pedidos.chart-item
+          #chart-metodo-pago.chart-item
+          #chart-historial.chart-item
+          #chart-pedidos-vencidos.chart-item
+          #chart-tiempo-promedio-pago.chart-item
+          #chart-producto-mas-menos-vendido.chart-item
+          #chart-inventario-actual.chart-item
+          #chart-productos-sin-ventas.chart-item
+          #chart-utilidad-bruta.chart-item
+          #chart-top-clientes-deuda.chart-item
+
+        script(type="module" src="/js/pages/admin/finanzasAdminPages.js")
+        
+        style.
+          .chart-item {
+            width: 100%;
+            height: 400px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 1rem;
+          }
+          .error {
+            color: #d64045;
+            padding: 1rem;
+            background: #ffecec;
+            border-radius: 4px;
+          }

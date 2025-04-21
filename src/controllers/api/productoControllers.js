@@ -9,9 +9,9 @@ import {    crearProductoService,
 
 export async function crearProducto(req, res) {
     try {  
-        const { nombre, descripcion, categoria, id_subcategoria, precio, stock } = req.body;
+        const { nombre, descripcion, categoria, id_subcategoria, precio, stock, costo } = req.body;
         const imagenes = req.files;
-        const resultado = await crearProductoService({ nombre, descripcion, categoria, id_subcategoria, precio, stock, imagenes });
+        const resultado = await crearProductoService({ nombre, descripcion, categoria, id_subcategoria, precio, stock, imagenes, costo});
         res.json(resultado);
 
     } catch (error) {

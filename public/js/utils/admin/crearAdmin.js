@@ -15,12 +15,13 @@ document.addEventListener("DOMContentLoaded", () => {
         const nombre = form.querySelector("[name='nombre']");
         const descripcion = form.querySelector("[name='descripcion']");
         const precio = form.querySelector("[name='precio']");
+        const costo = form.querySelector("[name='costo']");
         const stock = form.querySelector("[name='stock']");
         const categoria = form.querySelector("#categoria");
         const subCategoria = form.querySelector("#subCategoria");
         const fileInput = form.querySelector("[name='imagen']");
 
-        if (!nombre || !descripcion || !precio || !stock || !categoria || !subCategoria) {
+        if (!nombre || !descripcion || !precio || !stock || !categoria || !subCategoria || !costo) {
             console.error("❌ Error: No se encontraron todos los campos del formulario.");
             alert("Error: Algunos campos del formulario no existen.");
             return;
@@ -29,6 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
         formData.append("nombre", nombre.value.trim());
         formData.append("descripcion", descripcion.value.trim());
         formData.append("precio", precio.value.trim());
+        formData.append("costo", costo.value.trim());
         formData.append("stock", stock.value.trim());
 
         // Validar que el usuario haya seleccionado una categoría y subcategoría
@@ -58,7 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         
         const url = "/api/producto/crearProducto";
-        
+        console.log(formData)
         try {
             const response = await fetch(url, {
                 method: "POST",

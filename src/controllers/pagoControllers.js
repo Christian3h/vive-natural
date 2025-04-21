@@ -7,28 +7,25 @@ export async function validarUsuario(req, res, next) {
 
     try {
         const resultado = await consultarEstadoCliente(req.user.id);
-        console.log(req.user.id);
-        
+
         if (!resultado || resultado.length === 0) {
             // Si no existe, lo insertamos como pendiente
             await insertarEstadoPendiente(req.user.id);
-            return res.redirect('/perfil?mensaje=Tu+solicitud+fue+enviada+para+aprobación');
+            return res.redirect('/perfil');
         }
-
         const estado = resultado[0].estado;
-        console.log(estado);
 
         if (estado === 'rechazado') {
-            return res.redirect('/perfil?mensaje=Tu+solicitud+fue+rechazada');
+            return res.redirect('/perfil');
         }
 
         if (estado === 'pendiente') {
-            return res.res('mi chino tenga paciencia');
+            return res.res('/perfil');
         }
 
         // Verificamos si el usuario tiene datos de envío
         const datosEnvio = await verificarDatosDeEnvio(req.user.id);
-        console.log(datosEnvio);
+
         if (!datosEnvio || datosEnvio.length === 0) {
             // Si no tiene datos de envío, redirigimos para que los ingrese
             return res.redirect('/datos-envio');

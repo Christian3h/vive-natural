@@ -1,0 +1,188 @@
+doctype html
+html(lang="es")
+    head
+        meta(charset="UTF-8")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        title Vive natural 
+        link(rel="stylesheet", href="/css/main/dashboard.css")
+    body 
+        // menu de administrador
+        include ../../partials/menuAdmin.pug
+        main 
+            article 
+                .search-container
+                    input(
+                        type="text"
+                        id="buscador-clientes"
+                        placeholder="Buscar cliente por nombre..."
+                        class="search-input"
+                    )
+
+                #clientes-container
+                    h2 Clientes con Deuda
+                    #clientes-deuda-container
+
+                    h2 Clientes Pagados
+                    #clientes-pagados-container
+
+            
+                #modalAgregarPago.modal(style="display: none;")
+                    .modal-content
+                        span#closeModal.close &times;
+                        h2 Agregar Pago
+                        
+                        // Formulario para agregar pago
+                        form#agregarPagoForm
+                            .form-group
+                                label(for="idPago") ID Pago
+                                input(type="text" id="idPago" name="idPago" readonly)
+                            
+                            .form-group
+                                label(for="monto") Monto
+                                input(type="number" id="monto" name="monto" min="0" step="0.01" required)
+                                small#montoMax
+                            
+                            .form-group
+                                label(for="metodo") Método de Pago
+                                select#metodo(name="metodo" required)
+                                    option(value="efectivo") Efectivo
+                                    option(value="tarjeta") Tarjeta
+                                    option(value="transferencia") Transferencia
+                            
+                            button(type="submit") Agregar Pago
+
+            style. 
+                /* Estilo básico para que funcione */
+                .search-container {
+                    margin-bottom: 10px;
+                }
+
+                .search-input {
+                    width: 100%;
+                    padding: 8px;
+                    border: 1px solid #ccc;
+                    border-radius: 4px;
+                }
+
+                #clientes-container {
+                    margin-top: 20px;
+                }
+
+                .cliente-card {
+                    border: 1px solid #ddd;
+                    padding: 15px;
+                    margin-bottom: 10px;
+                    border-radius: 4px;
+                    background-color: #f9f9f9;
+                }
+
+                .cliente-header {
+                    display: flex;
+                    justify-content: space-between;
+                    cursor: pointer;
+                }
+
+                .cliente-info {
+                    display: flex;
+                    gap: 10px;
+                }
+
+                .cliente-img {
+                    width: 50px;
+                    height: 50px;
+                    border-radius: 50%;
+                }
+
+                .toggle-button {
+                    font-weight: bold;
+                    color: #007bff;
+                }
+
+                .abonos-container {
+                    margin-top: 10px;
+                    margin-left: 20px;
+                }
+
+                .hidden {
+                    display: none;
+                }
+
+                .add-payment-btn {
+                    padding: 8px 12px;
+                    background-color: #28a745;
+                    color: white;
+                    border: none;
+                    border-radius: 4px;
+                    cursor: pointer;
+                }
+
+                .add-payment-btn:hover {
+                    background-color: #218838;
+                }
+
+                .pago-card {
+                    border: 1px solid #ddd;
+                    padding: 15px;
+                    margin-bottom: 10px;
+                    border-radius: 4px;
+                    background-color: #f1f1f1;
+                }
+
+                .pago-header {
+                    font-weight: bold;
+                }
+
+                .abonos-list {
+                    margin-left: 20px;
+                    list-style-type: disc;
+                }
+
+                .pago-info {
+                    margin-top: 10px;
+                }
+
+                .pagado {
+                    background-color: #e6f9e6; /* verde pastel */
+                    border: 1px solid #b5e7b5;
+                }
+
+
+                .modal {
+                    display: none;
+                    position: fixed;
+                    z-index: 1;
+                    left: 0;
+                    top: 0;
+                    width: 100%;
+                    height: 100%;
+                    background-color: rgba(0, 0, 0, 0.5);
+                }
+
+                .modal-content {
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    background-color: white;
+                    padding: 20px;
+                    border-radius: 4px;
+                    width: 300px;
+                }
+
+                .close-btn {
+                    color: #aaa;
+                    font-size: 28px;
+                    font-weight: bold;
+                    float: right;
+                    cursor: pointer;
+                }
+
+                .close-btn:hover,
+                .close-btn:focus {
+                    color: black;
+                    text-decoration: none;
+                    cursor: pointer;
+                }
+
+
+    script(type="module", src="/js/pages/admin/clientesPagosAdminPages.js") 

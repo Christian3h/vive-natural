@@ -38,3 +38,9 @@ export async function contactoUsuarioControllers(req, res) {
         usuario: req.user
     })
 }
+
+export async function infoUsuarioControllers(req, res){
+    res.render('info', {
+        usuario: req.user
+    })
+}

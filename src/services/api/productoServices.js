@@ -28,13 +28,13 @@ const uploadDir = path.join(process.cwd(), 'public/uploads/productos');
 
 
 //crear producto 
-export async function crearProductoService({ nombre, descripcion, categoria, id_subcategoria, precio, stock, imagenes }) {
+export async function crearProductoService({ nombre, descripcion, categoria, id_subcategoria, precio, stock, imagenes, costo}) {
     if (!imagenes || imagenes.length === 0) {
         throw new Error('Debes subir al menos una imagen');
     }
     const id_producto = await generarIdProducto();
     // Insertar datos en la BD
-    await insertarProducto(id_producto, nombre, descripcion, categoria, id_subcategoria);
+    await insertarProducto(id_producto, nombre, descripcion, categoria, id_subcategoria, costo);
     await insertarPrecio(id_producto, precio);
     await insertarStock(id_producto, stock);
     // Procesar imágenes

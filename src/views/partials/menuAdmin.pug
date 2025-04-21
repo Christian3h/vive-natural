@@ -4,25 +4,24 @@ header
             ul
                 li
                     a(href="/sesion/admin/" data-seccion="finanzas") Finanzas
-                    ul.submenu 
-                        li: a(href="/sesion/admin/finanzas/pagos") Agregar Pagos
-                        li: a(href="/sesion/admin/") reportes 
                         
                 li
                     a(href="#" data-seccion="productos" class="has-submenu") Productos
                     ul.submenu
                         li: a(href="/sesion/admin/producto/crear") Crear producto
                         li: a(href="/sesion/admin/categoria/crear") Crear categoría
+                        li: a(href="/sesion/admin/categoria/sub") Crear Subcategoría
                         li: a(href="/sesion/admin/productos/") Lista de productos
                 li
                     a(href="#" data-seccion="clientes") Clientes
                     ul.submenu
+                        li: a(href="/sesion/admin/clientes/pagos") Agregar pagos 
                         li: a(href="/sesion/admin/clientes/pendientes") Clientes pendientes
                         li: a(href="/sesion/admin/clientes/") Administrar clientes 
                 li
                     a(href="#" data-seccion="pedidos") Pedidos
                     ul.submenu
-                        li: a(href="/sesion/admin/pedidos") Pedidos
+                        li: a(href="/sesion/admin/pedidos") Pedidos pendientes
         #menu-user
             a(href="/perfil")
                 img(src= `${usuario.profile_picture}` class="perfil-img" alt="Foto de perfil")

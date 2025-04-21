@@ -1,6 +1,22 @@
 import { consultarCarritoFechtch } from "../fetch/api.js";
 
 (async function main() {
+
+  // Cierra otros tooltips si se abre uno nuevo
+  function toggleTooltip(el) {
+    document.querySelectorAll('.tooltip-container').forEach(t => {
+      if (t !== el) t.classList.remove('show');
+    });
+    el.classList.toggle('show');
+  }
+
+  // Cierra el tooltip al tocar fuera
+  document.addEventListener('click', function (e) {
+    document.querySelectorAll('.tooltip-container').forEach(t => {
+      if (!t.contains(e.target)) t.classList.remove('show');
+    });
+  });
+
   const carrito = await consultarCarritoFechtch();
   if (!carrito || carrito.length === 0) {
     return window.location.href = '/carrito';
@@ -74,10 +90,6 @@ function setupModalPago(total) {
 
     modal.classList.add('oculto');
 
-    // Aquí puedes llamar a una función para verificar datos de envío
-    console.log({ metodo, cuotas, fechaLimite });
-
-    // 👉 Luego puedes continuar con: verificarDatosDeEnvio(metodo)
     // Por ahora, solo redirige a una página temporal de "procesando"
     window.location.href = `/procesando?metodo=${metodo}&cuotas=${cuotas}&fecha=${fechaLimite}`;
   });

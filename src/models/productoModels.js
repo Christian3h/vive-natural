@@ -20,11 +20,11 @@ const insertarStock = async (id_producto, stock) => {
     }
 };
 
-const insertarProducto = async (id_producto, nombre, descripcion, id_categoria, id_subcategoria) => {
+const insertarProducto = async (id_producto, nombre, descripcion, id_categoria, id_subcategoria, costo) => {
     const [result] = await pool.query(
-        `INSERT INTO productos (id, nombre, descripcion, estado, id_categoria, id_subcategoria, fecha_creacion) 
-         VALUES (UNHEX(?), ?, ?, 1, ?, ?, NOW())`,
-        [id_producto, nombre, descripcion, id_categoria, id_subcategoria]
+        `INSERT INTO productos (id, nombre, descripcion, estado, id_categoria, id_subcategoria, costo, fecha_creacion) 
+         VALUES (UNHEX(?), ?, ?, '1', ?, ?, ?, NOW())`,
+        [id_producto, nombre, descripcion, id_categoria, id_subcategoria, costo]
     );
     if (result.affectedRows === 0) {
         throw new Error('Error al insertar el producto.');

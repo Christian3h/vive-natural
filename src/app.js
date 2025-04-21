@@ -26,6 +26,12 @@ import { helmetMiddleware } from './config/helmet.js'
 app.use(sessionMiddleware)
 app.use(helmetMiddleware);
 
+app.use((req, res, next) => {
+    res.setHeader("Content-Security-Policy", "script-src 'self' https://www.gstatic.com https://www.googleapis.com;");
+    next();
+  });
+  
+
 // Inicializar Passport
 app.use(passport.initialize())
 app.use(passport.session())

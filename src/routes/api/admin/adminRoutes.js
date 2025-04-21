@@ -1,27 +1,29 @@
 import express from "express";
 const router = express.Router();
 
-import {infoProducto, crearProductoAdmin} from '../../../controllers/api/productoControllers.js'
+import { infoProducto, crearProductoAdmin } from '../../../controllers/api/productoControllers.js'
 
 import { verificarAutenticacion, verificarAdmin } from '../../../middlewares/sesionMiddlewares.js'
 
 // importaciones de controllers para las rutas 
 
-import {adminInicioControllers,
-        productosInicioControllers,
-        categoriaCrearAdminControllers
-        
+import {
+    adminInicioControllers,
+    productosInicioControllers,
+    categoriaCrearAdminControllers,
+    subCategoriaCrearAdminControllers
+
 } from '../../../controllers/api/admin/adminControllers.js'
 
 // 🔹 Dashboard (solo autenticados)
 
 // RUTAS NUEVAS PARA PROGRAMAR 
 
-router.get('/' , verificarAutenticacion, verificarAdmin, adminInicioControllers);
+router.get('/', verificarAutenticacion, verificarAdmin, adminInicioControllers);
 
 // rutas para los productos
 
-router.get('/productos', verificarAutenticacion, verificarAdmin, productosInicioControllers );
+router.get('/productos', verificarAutenticacion, verificarAdmin, productosInicioControllers);
 
 router.get("/producto/crear", verificarAutenticacion, verificarAdmin, crearProductoAdmin)
 
@@ -29,50 +31,63 @@ router.get("/producto/:id", verificarAutenticacion, verificarAdmin, infoProducto
 
 router.get("/categoria/crear", verificarAutenticacion, verificarAdmin, categoriaCrearAdminControllers)
 
+router.get("/categoria/sub", verificarAutenticacion, verificarAdmin, subCategoriaCrearAdminControllers)
+
+
 // rutas para administrar a los clientes desde el panel del administrador 
 
-import { clientesPendientesControllers,clientesPendientesListarControllers, clientesListarControllers } from '../../../controllers/api/admin/clientesAdminControllers.js'
+import { clientesPendientesControllers, clientesPendientesListarControllers, clientesListarControllers, clientesPagosPendientes,clientesPagosPendientesCon, clienetsPagosAbonosControllers } from '../../../controllers/api/admin/clientesAdminControllers.js'
+
+router.get('/clientes/pagos', verificarAutenticacion, verificarAdmin, clientesPagosPendientes )
+
+// ruta para consultar los datos 
+
+router.post('/clientes/pagos', verificarAutenticacion, verificarAdmin, clientesPagosPendientesCon)
+
+// agregar un monto de pago 
+
+router.post('/clientes/pagos/abono', verificarAutenticacion, verificarAdmin, clienetsPagosAbonosControllers)
 
 router.get('/clientes/pendientes', verificarAutenticacion, verificarAdmin, clientesPendientesControllers);
 
-router.post('/clientes/pendientes' , verificarAutenticacion, verificarAdmin, clientesPendientesListarControllers);
+router.post('/clientes/pendientes', verificarAutenticacion, verificarAdmin, clientesPendientesListarControllers);
 
-router.post('/clientes/consulta', verificarAutenticacion ,verificarAdmin, clientesListarControllers)
+router.post('/clientes/consulta', verificarAutenticacion, verificarAdmin, clientesListarControllers)
 
 import pool from "../../../models/bd.js";
 
 router.put('/clientes/estado-modificar', verificarAutenticacion, verificarAdmin, async (req, res) => {
-        try {
-            const { id_usuario, estado } = req.body;
-    
-            // Validar datos
-            if (!id_usuario || !['aprobado', 'rechazado'].includes(estado)) {
-                return res.status(400).json({ error: 'Datos inválidos' });
-            }
-    
-            // Actualizar en la base de datos
-            const [result] = await pool.query(
-                'UPDATE usuarios_aprobacion SET estado = ? WHERE id_usuario = UNHEX(?)',
-                [estado, id_usuario.replace(/-/g, '')]
-            );
-    
-            if (result.affectedRows === 0) {
-                return res.status(404).json({ error: 'Cliente no encontrado' });
-            }
-    
-            res.json({ mensaje: `Estado actualizado a ${estado}` });
-    
-        } catch (error) {
-            console.error('Error en la ruta /estado:', error);
-            res.status(500).json({ error: 'Error interno del servidor' });
+    try {
+        const { id_usuario, estado } = req.body;
+
+        // Validar datos
+        if (!id_usuario || !['aprobado', 'rechazado'].includes(estado)) {
+            return res.status(400).json({ error: 'Datos inválidos' });
         }
-    });
-    
+
+        // Actualizar en la base de datos
+        const [result] = await pool.query(
+            'UPDATE usuarios_aprobacion SET estado = ? WHERE id_usuario = UNHEX(?)',
+            [estado, id_usuario.replace(/-/g, '')]
+        );
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: 'Cliente no encontrado' });
+        }
+
+        res.json({ mensaje: `Estado actualizado a ${estado}` });
+
+    } catch (error) {
+        console.error('Error en la ruta /estado:', error);
+        res.status(500).json({ error: 'Error interno del servidor' });
+    }
+});
+
 
 //rutas para todo el tema de pedidos 
 
-router.get('/pedidos/', verificarAutenticacion, verificarAdmin, async (req, res)=>{
-    res.render('admin/pedidos/pedidos', {
+router.get('/pedidos/', verificarAutenticacion, verificarAdmin, async (req, res) => {
+    clientesServicesres.render('admin/pedidos/pedidos', {
         usuario: req.user
     })
 })
@@ -83,71 +98,68 @@ router.get('/pedidos/pendientes', verificarAutenticacion, verificarAdmin, async 
     try {
         const [result] = await pool.query(`
            SELECT 
-    p.id_pedido,
-    p.fecha_creacion,
-    p.metodo_pago,
-    p.cuotas,
-    p.fecha_limite,
-    p.comentarios,
-    u.name AS nombre_cliente,
-    u.profile_picture,
-    SUM(dp.cantidad * dp.precio_unitario) AS total,
-    p.estado,
-    e.ciudad,
-    e.direccion,
-    e.numero AS telefono_contacto,
-    GROUP_CONCAT(
-        CONCAT(
-            'Producto: ', pr.nombre, 
-            ', Cantidad: ', dp.cantidad, 
-            ', Precio: $', pe.precio -- Cambié de 'dp.precio_unitario' a 'pe.precio' para acceder a la tabla 'precios'
-        ) 
-        SEPARATOR ' | '
-    ) AS detalles_productos, -- Concatenar detalles del producto
-    GROUP_CONCAT(
-        pr.nombre
-        SEPARATOR ', '
-    ) AS productos, -- Lista de nombres de productos
-    GROUP_CONCAT(
-        pe.precio -- Usamos 'pe.precio' para acceder al precio en la tabla 'precios'
-        SEPARATOR ', '
-    ) AS precios, -- Lista de precios de los productos desde la tabla 'precios'
-    GROUP_CONCAT(
-        pr.id
-        SEPARATOR ', '
-    ) AS ids_productos -- Lista de ids de los productos
-FROM 
-    pedidos p
-JOIN 
-    usuarios u ON HEX(u.id) = p.id_usuario
-JOIN 
-    detalle_pedido dp ON p.id_pedido = dp.id_pedido
-LEFT JOIN 
-    envios e ON p.id_envio = e.id_envio
-JOIN 
-    productos pr ON dp.producto_id = pr.id
-LEFT JOIN 
-    categoria cat ON pr.id_categoria = cat.id
-LEFT JOIN 
-    subcategoria subcat ON pr.id_subcategoria = subcat.id
-JOIN 
-    precios pe ON dp.producto_id = pe.id_producto -- Nos aseguramos de hacer JOIN con la tabla 'precios'
-WHERE 
-    p.estado = 'pendiente'
-GROUP BY 
-    p.id_pedido, p.fecha_creacion, p.metodo_pago, p.cuotas, p.fecha_limite, p.comentarios,
-    u.name, u.profile_picture, p.estado,
-    e.ciudad, e.direccion, e.numero
-ORDER BY 
-    p.fecha_creacion DESC;
-
-
+                p.id_pedido,
+                p.fecha_creacion,
+                p.metodo_pago,
+                p.cuotas,
+                p.fecha_limite,
+                p.comentarios,
+                u.name AS nombre_cliente,
+                u.profile_picture,
+                SUM(dp.cantidad * dp.precio_unitario) AS total,
+                p.estado,
+                e.ciudad,
+                e.direccion,
+                e.numero AS telefono_contacto,
+                GROUP_CONCAT(
+                    CONCAT(
+                        'Producto: ', pr.nombre, 
+                        ', Cantidad: ', dp.cantidad, 
+                        ', Precio: $', pe.precio -- Cambié de 'dp.precio_unitario' a 'pe.precio' para acceder a la tabla 'precios'
+                    ) 
+                    SEPARATOR ' | '
+                ) AS detalles_productos, -- Concatenar detalles del producto
+                GROUP_CONCAT(
+                    pr.nombre
+                    SEPARATOR ', '
+                ) AS productos, -- Lista de nombres de productos
+                GROUP_CONCAT(
+                    pe.precio -- Usamos 'pe.precio' para acceder al precio en la tabla 'precios'
+                    SEPARATOR ', '
+                ) AS precios, -- Lista de precios de los productos desde la tabla 'precios'
+                GROUP_CONCAT(
+                    pr.id
+                    SEPARATOR ', '
+                ) AS ids_productos -- Lista de ids de los productos
+            FROM 
+                pedidos p
+            JOIN 
+                usuarios u ON HEX(u.id) = p.id_usuario
+            JOIN 
+                detalle_pedido dp ON p.id_pedido = dp.id_pedido
+            LEFT JOIN 
+                envios e ON p.id_envio = e.id_envio
+            JOIN 
+                productos pr ON dp.producto_id = pr.id
+            LEFT JOIN 
+                categoria cat ON pr.id_categoria = cat.id
+            LEFT JOIN 
+                subcategoria subcat ON pr.id_subcategoria = subcat.id
+            JOIN 
+                precios pe ON dp.producto_id = pe.id_producto -- Nos aseguramos de hacer JOIN con la tabla 'precios'
+            WHERE 
+                p.estado = 'pendiente'
+            GROUP BY 
+                p.id_pedido, p.fecha_creacion, p.metodo_pago, p.cuotas, p.fecha_limite, p.comentarios,
+                u.name, u.profile_picture, p.estado,
+                e.ciudad, e.direccion, e.numero
+            ORDER BY 
+                p.fecha_creacion DESC;
         `);
         res.json(result);
-        console.log(result)
     } catch (e) {
         console.error('Error al consultar pedidos pendientes');
-        console.log(e);
+        console.error(e);
         res.status(500).json({ error: 'Error interno del servidor' });
     }
 });
@@ -158,11 +170,11 @@ router.put('/pedidos/:id/estado', verificarAutenticacion, verificarAdmin, async 
         const { estado } = req.body;
 
         // Validar estado
-        const estadosValidos = ['pendiente', 'entregado', 'cancelado'];
+        const estadosValidos = ['pendiente', 'aprobado', 'cancelado'];
         if (!estadosValidos.includes(estado)) {
-            return res.status(400).json({ 
+            return res.status(400).json({
                 message: 'Estado inválido',
-                error: 'El estado debe ser: pendiente, entregado o cancelado'
+                error: 'El estado debe ser: pendiente, aprobado o cancelado'
             });
         }
         let pedidoActual
@@ -212,26 +224,60 @@ router.put('/pedidos/:id/estado', verificarAutenticacion, verificarAdmin, async 
             [estado, id]
         );
 
+        const [rows] = await pool.query(`
+            SELECT 
+                SUM(dp.precio_unitario * dp.cantidad) AS total
+            FROM detalle_pedido dp
+            WHERE dp.id_pedido = ?
+        `, [id]);
+
+        const [resultpagos] = await pool.query(`
+            INSERT INTO pagos (id_pedido, monto, metodo_pago, estado, referencia, comprobante)
+            VALUES (?, ?, ?, 'pendiente', ?, ?)
+        `, [id, rows[0].total , 'efectivo', null, null]);
+
+
+
         if (result.affectedRows === 0) {
-            return res.status(404).json({ 
+            return res.status(404).json({
                 message: 'Pedido no encontrado',
                 error: `No se encontró el pedido con ID ${id}`
             });
         }
 
-        res.json({ 
+        res.json({
             mensaje: `Pedido #${id} actualizado a "${estado}" correctamente`,
             estado: estado
         });
 
     } catch (error) {
         console.error('Error al actualizar pedido:', error);
-        res.status(500).json({ 
+        res.status(500).json({
             message: 'Error interno del servidor',
-            error: error.message 
+            error: error.message
         });
     }
 });
+
+
+// rutas para las fnianzas
+
+
+import * as dashboardController from '../../../controllers/api/admin/finanzasAdminControllers.js';
+
+
+router.get('/ventas-mes', dashboardController.getVentasDelMes);
+router.get('/pedidos-aprobados-vs-entregados', dashboardController.getPedidosAprobadosVsEntregados);
+router.get('/pedidos-metodo-pago', dashboardController.getPedidosPorMetodoDePago);
+router.get('/pedidos-vencidos', dashboardController.getPedidosVencidos);
+router.get('/historial-ventas', dashboardController.getHistorialVentasMensual);
+router.get('/tiempo-promedio-pago', dashboardController.getTiempoPromedioPago);
+router.get('/productos-mas-menos-vendido', dashboardController.getProductoMasYMenosVendido);
+router.get('/inventario-actual', dashboardController.getInventarioActual);
+router.get('/productos-sin-ventas', dashboardController.getProductosSinVentas);
+router.get('/utilidad-bruta', dashboardController.getUtilidadBrutaDelMes);
+router.get('/top-clientes-deuda', dashboardController.getTopClientesConMasDeuda);
+
 
 
 export default router;
