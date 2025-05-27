@@ -1,3 +1,4 @@
+
 export async function obtenerProductos(categoria = null, subcategoria = null)  {
     try {
         const response = await fetch('/api/producto/listarProductos', {
@@ -21,7 +22,7 @@ export async function obtenerProducto(id) {
             headers: { 'Content-Type': 'application/json' }
         });
         if (!response.ok) throw new Error(`Error en la solicitud: ${response.status} - ${response.statusText}`);
-        return await response.json();
+        return response.json();
     } catch (error) {
         console.error('Error al obtener producto:', error.message);
         return null;
@@ -110,17 +111,19 @@ export async function restarStockCarritoFetch(carrito) {
     }
 }
 
-export async function vaciarCarritoFetch() {
-    try {
-        const response = await fetch('/api/carrito/vaciar-carrito', {
-            method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include'
-        });
-        if (!response.ok) throw new Error(`Error en la solicitud: ${response.status} - ${response.statusText}`);
-        return await response.json();
-    } catch (error) {
-        console.error('Error al vaciar carrito:', error.message);
-        return null;
-    }
-}
+export async function vaciarCarritoFetch() {                                                                         
+    try {                                                                                                            
+        const response = await fetch('/api/carrito/vaciar-carrito', {                                                
+            method: 'DELETE',                                                                                        
+            headers: { 'Content-Type': 'application/json' },                                                         
+            credentials: 'include'                                                                                   
+        });                                                                                                          
+        if (!response.ok) throw new Error(`Error en la solicitud: ${response.status} - ${response.statusText}`);     
+        return await response.json();                                                                                
+    } catch (error) {                                                                                                
+        console.error('Error al vaciar carrito:', error.message);                                                    
+        return null;                                                                                                 
+    }                                                                                                                
+}                                                                                                                    
+                                                                                                                     
+                                                                                                                     

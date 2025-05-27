@@ -89,6 +89,55 @@ export async function obtenerClientesConPagosClientesModels() {
     return rows;
 }
 
+export async function actualizarEstadosDePagoYSeguimiento() {
+  try {
+    // 1. Actualizar estado de pagos individuales
+    const [pagos] = await pool.query(`
+      SELECT 
+        pa.id_pago,
+        pa.id_pedido,
+        pa.monto AS monto_pago,
+        COALESCE(SUM(ab.monto_abono), 0) AS total_abonado
+      FROM pagos pa
+      LEFT JOIN pagos_abono ab ON ab.id_pago = pa.id_pago
+      GROUP BY pa.id_pago
+    `);
+
+    const pagosActualizar = pagos.map(async (p) => {
+      if (parseFloat(p.total_abonado) >= parseFloat(p.monto_pago) && p.estado !== 'completado') {
+        await pool.query(`UPDATE pagos SET estado = 'completado' WHERE id_pago = ?`, [p.id_pago]);
+      }
+    });
+
+    await Promise.all(pagosActualizar);
+
+    // 2. Actualizar seguimiento_pedidos si el cliente ya no debe nada (todos pagos completados)
+    const [pedidos] = await pool.query(`
+      SELECT 
+        p.id_pedido,
+        SUM(CASE WHEN pa.estado != 'completado' THEN 1 ELSE 0 END) AS pagos_pendientes
+      FROM pedidos p
+      JOIN pagos pa ON pa.id_pedido = p.id_pedido
+      GROUP BY p.id_pedido
+    `);
+
+    const seguimientosActualizar = pedidos.map(async (pedido) => {
+      if (pedido.pagos_pendientes === 0) { // No quedan pagos pendientes
+        await pool.query(`
+          UPDATE seguimiento_pedidos
+          SET estado = 'pagado', fecha_cambio = NOW(), comentario = 'Pago completado automáticamente'
+          WHERE id_pedido = ? AND estado != 'pagado'
+        `, [pedido.id_pedido]);
+      }
+    });
+
+    await Promise.all(seguimientosActualizar);
+
+  } catch (error) {
+    console.error('Error en actualizarEstadosDePagoYSeguimiento:', error);
+  }
+}
+
 
 // 💳 Registra un abono parcial de un pago
 // 🔁 Usar para agregar un abono a un pago existente

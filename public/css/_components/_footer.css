@@ -6,7 +6,7 @@ footer{
     width: 100%;
     display: grid;  
     place-content: center;
-    position:static;
+    position:relative;
     bottom: 0;
 }
 

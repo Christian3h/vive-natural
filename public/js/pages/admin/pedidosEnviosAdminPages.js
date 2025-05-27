@@ -1,6 +1,6 @@
 async function obtenerPedidosPendientes() {
     try {
-        const response = await fetch('/sesion/admin/pedidos/pendientes', {
+        const response = await fetch('/sesion/admin/pedidos/pendientes/envios', {
             headers: {
                 'Authorization': 'Bearer ' + (localStorage.getItem('authToken') || '')
             }
@@ -132,7 +132,7 @@ function renderPedidosPendientes(pedidos) {
 
             <div class="btn-container">
                 <button class="btn btn-entregar")">
-                    <i class="fas fa-check"></i> Pedido aprobado
+                    <i class="fas fa-check"></i> Pedido Entregado
                 </button>
                 <button class="btn btn-cancelar")">
                     <i class="fas fa-times"></i> Cancelar Pedido
@@ -171,7 +171,7 @@ async function marcarPedido(pedidoId, nuevoEstado) {
     }
 
     try {
-        const response = await fetch(`/sesion/admin/pedidos/${pedidoId}/estado`, {
+        const response = await fetch(`/sesion/admin/pedidos/${pedidoId}/estado/envios`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -182,7 +182,7 @@ async function marcarPedido(pedidoId, nuevoEstado) {
             })
         });
 
-        console.log(response)
+
 
         if (!response.ok) {
             const error = await response.json();

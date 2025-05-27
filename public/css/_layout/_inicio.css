@@ -13,14 +13,36 @@ article{
 
 
 .inicio{
-    height: 89dvh;
+    height: 93dvh;
+    background-image: url('https://images.unsplash.com/photo-1543459176-4426b37223ba?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fHBsYW50c3xlbnwwfHwwfHx8MA%3D%3D');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.inicio::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5); /* Oscurece */
+    z-index: 2;
+}
+
+.inicio > * {
+    position: relative;
+    z-index: 3; /* Para que el contenido esté encima del filtro */
 }
 
 .info{
     max-width: 80dvw;
     margin: auto;
     margin-bottom: 40px;
+    margin-top: 10dvh;
     text-align: center;
+}
+
+.productos{
+    margin-top: 10dvh;
 }
 
 .info h2{
@@ -33,7 +55,13 @@ article{
 }
 
 article h1{
-    font-size: var(--letra-grande);
+    font-size: 8.7em;
+    color: var(--blanco-roto);
+}
+
+.inicio p{
+    font-size: 2em;
+    color: var(--blanco-roto);
 }
 
 .titulo{
@@ -43,3 +71,37 @@ article h1{
 .texto{
     font-size: var(--letra-subtitulo);
 }
+
+@media (max-width:850px){
+    article h1{
+    font-size: 4.7em;
+    }
+
+    .inicio p{
+        font-size: 1.5em;
+    }
+
+
+    .inicio{
+        height: 89dvh;
+    }
+
+} 
+
+@media (max-width:500px){
+    article h1{
+    font-size: 3.7em;
+    }
+
+    .inicio p{
+        font-size: 1.2em;
+    }
+
+
+    .inicio{
+        height: 89dvh;
+    }
+
+} 
+    
+    

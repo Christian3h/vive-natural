@@ -123,14 +123,16 @@ export async function utilidadBrutaDelMes() {
     const [result] = await pool.query(
         `SELECT 
             p.nombre,
-            SUM(CASE WHEN s.cantidad < 0 THEN -s.cantidad * (pa.precio - p.costo) ELSE 0 END) AS utilidad_bruta
-        FROM stock s
-        JOIN productos p ON s.id_producto = p.id
-        JOIN precios pa ON pa.id_producto = p.id
-        WHERE pa.activo = 1
-        AND MONTH(pa.fecha_creacion) = MONTH(CURRENT_DATE())
-        GROUP BY p.id`
+            DATE_FORMAT(pe.fecha_creacion, '%Y-%m') AS mes,
+            SUM((dp.precio_unitario - p.costo) * dp.cantidad) AS ganancia
+        FROM detalle_pedido dp
+        JOIN pedidos pe ON dp.id_pedido = pe.id_pedido
+        JOIN productos p ON dp.producto_id = p.id
+        WHERE pe.estado = 'aprobado' -- considerar solo ventas efectivas
+        GROUP BY p.nombre, mes
+        ORDER BY mes DESC, p.nombre;`
     );
+    console.log(result)
     return result;
 }
 

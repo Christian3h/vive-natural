@@ -36,6 +36,8 @@ app.use((req, res, next) => {
 app.use(passport.initialize())
 app.use(passport.session())
 
+// esto es un comentario jeje xd 
+
 // Configuración del motor de plantillas
 app.set('view engine', 'pug');
 app.set('views', path.join(rutaGlobal, 'views'));

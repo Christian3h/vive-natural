@@ -92,12 +92,16 @@ router.get('/procesando', validarUsuario, async (req, res) => {
 });
 
 import { insertarStock } from '../models/productoModels.js';
+import { Console } from 'console';
+import e from 'express';
 
 async function procesarPedido(req, res) {
     const id_usuario = req.user.id;
     const { metodo, cuotas, fecha } = req.query;
-    const fechaLimite = (fecha && fecha !== 'null') ? fecha : null;
-
+    let fechaLimite = null;
+    if (fecha && !isNaN(Date.parse(fecha))) {
+    fechaLimite = fecha;
+    }
     try {
         // 1. Obtener productos del carrito
         const carrito = await obtenerCarritoModels(id_usuario);
@@ -129,13 +133,20 @@ async function procesarPedido(req, res) {
             return res.status(400).send('No se encontró información de envío para el usuario.');
         }
 
+        let total = 0;
 
+        carrito.forEach(e => {
+            total += e.precio * e.cantidad;
+        });
 
+        console.log(total);
+
+        
         // carga informacion del pedido a la base de datos -- todos los pedidos se suben como pendientes por que el admin los tiene que aprobar
         const [pedidoResult] = await pool.query(
             `INSERT INTO pedidos (id_usuario, id_envio, metodo_pago, cuotas, fecha_limite, precio, fecha_creacion, estado)
              VALUES (?, ?, ?, ?, ?, ?, NOW(), 'pendiente')`,
-            [id_usuario, id_envio, 'efectivo', cuotas || null, fechaLimite, carrito[0].precio]
+            [id_usuario, id_envio, metodo, cuotas || null, fechaLimite, total]
         );
         const id_pedido = pedidoResult.insertId;
 

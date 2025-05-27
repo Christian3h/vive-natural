@@ -13,14 +13,21 @@ header {
     font-size: var(--letra-subtitulo);
     z-index: 1000;
     width: 100%;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 nav {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 15px; 
+    gap: 15px;     
 }
+
+header.scrolled {
+    background-color: rgba(0, 51, 34, 1); /* sin transparencia */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
 
 #carrito span{
     position: absolute;

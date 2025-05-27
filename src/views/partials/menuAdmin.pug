@@ -1,5 +1,8 @@
-header
-    nav.admin-nav
+header#header-main
+    .menu-responsive
+        h1 Vive natural 
+        button( id="menu-toggle") ☰ 
+    nav.admin-nav#menu-nav
         #menu-lateral
             ul
                 li
@@ -22,7 +25,9 @@ header
                     a(href="#" data-seccion="pedidos") Pedidos
                     ul.submenu
                         li: a(href="/sesion/admin/pedidos") Pedidos pendientes
+                        li: a(href="/sesion/admin/pedidos/envios") Pedidos poer entregar
         #menu-user
             a(href="/perfil")
                 img(src= `${usuario.profile_picture}` class="perfil-img" alt="Foto de perfil")
             a(href="/sesion/logout") Cerrar sesión
+script(type="module", src="/js/pages/admin/responsiveDashboard.js") 

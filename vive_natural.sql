@@ -174,7 +174,7 @@ CREATE TABLE `pedidos` (
   `id_envio` int(11) DEFAULT NULL,
   `cuotas` int(11) DEFAULT NULL,
   `fecha_limite` date DEFAULT NULL,
-  `fecha_creacion` datetime DEFAULT current_timestamp(),
+  `fecha_creacion` datetime NULL DEFAULT NULL,
   `precio` int(11) DEFAULT NULL,
   `estado` enum('pendiente','cancelado','aprobado') NOT NULL DEFAULT 'pendiente',
   `comentarios` text DEFAULT NULL,
@@ -200,7 +200,7 @@ CREATE TABLE `precios` (
   `id` int(11) NOT NULL,
   `id_producto` binary(16) NOT NULL,
   `precio` int(20) NOT NULL,
-  `fecha_creacion` datetime DEFAULT current_timestamp(),
+  `fecha_creacion` datetime NULL DEFAULT NULL,
   `activo` tinyint(1) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -225,7 +225,7 @@ CREATE TABLE `productos` (
   `descripcion` varchar(1000) DEFAULT NULL,
   `estado` tinyint(1) NOT NULL,
   `activo` tinyint(1) NOT NULL DEFAULT 1,
-  `fecha_creacion` date NOT NULL DEFAULT current_timestamp(),
+  `fecha_creacion` date NULL DEFAULT NULL ,
   `id_categoria` int(11) NOT NULL,
   `id_subcategoria` int(11) DEFAULT NULL,
   `costo` decimal(10,2) DEFAULT NULL

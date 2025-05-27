@@ -1,0 +1,78 @@
+.iconos-sesion {
+    position: absolute;
+    right: 30px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    margin:10px;            
+}
+
+/* Contenedor principal */
+.lista-pedidos {
+background-color: #EDE9E3;  /* Fondo claro */
+padding: 20px;
+border-radius: 10px;
+max-width: 800px;
+margin: auto;
+}
+
+/* Título */
+.lista-pedidos h2 {
+text-align: center;
+color: var(--verde-oscuro-principal);  /* Color verde oscuro */
+font-size: 40px;
+margin-bottom: 20px;
+}
+
+/* Lista de pedidos */
+#pedidos-ul {
+list-style-type: none;  /* Quitar los puntos de la lista */
+padding: 0;
+}
+
+#pedidos-ul li {
+background-color: #FFFFFF;  /* Fondo blanco para cada pedido */
+border-radius: 8px;
+padding: 15px;
+margin-bottom: 15px;
+box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Títulos dentro de cada pedido */
+#pedidos-ul li strong {
+color: var(--verde-oscuro-principal);  /* Verde oscuro */
+font-weight: bold;
+}
+
+/* Información dentro de cada pedido */
+#pedidos-ul li {
+font-size: 16px;
+color: #333333;  /* Texto oscuro para contraste */
+line-height: 1.6;
+}
+
+/* Línea separadora */
+hr {
+border: 0;
+border-top: 1px solid var(--dorado-suave);  /* Color dorado para la línea */
+margin-top: 15px;
+margin-bottom: 10px;
+}
+
+/* Precio y abono destacados */
+strong:nth-of-type(3),
+strong:nth-of-type(5) {
+color: var(--dorado-suave);  /* Color dorado para precio y abono */
+}
+
+/* Estilo para los elementos cuando el estado es 'aprobado' */
+strong:nth-of-type(4):after {
+content: " (Aprobado)";
+color: var(--verde-oscuro-principal);  /* Verde para aprobado */
+}
+
+/* Estilo para los elementos cuando el estado de pago es 'pendiente' */
+strong:nth-of-type(5):after {
+content: " (Pendiente)";
+color: var(--dorado-suave);  /* Naranja para pendiente */
+}

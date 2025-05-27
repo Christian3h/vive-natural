@@ -92,6 +92,8 @@ const listarProductos = async (id_categoria, id_subcategoria) => {
 
 // listar un solo produto 
 
+// linea modificada 
+//COALESCE(stk.cantidad, 0) AS producto_stock,
 
 const listarProducto = async (id) => {
     const [result] = await pool.query(
@@ -100,12 +102,12 @@ const listarProducto = async (id) => {
             HEX(p.id) AS producto_id_hex,
             p.nombre AS producto_nombre,
             p.descripcion AS producto_descripcion,
-            COALESCE(stk.cantidad, 0) AS producto_stock,
+            COALESCE(MAX(stk.cantidad), 0) AS producto_stock,
             p.id_categoria AS producto_categoria,  
             p.id_subcategoria AS producto_subcategoria,
             c.nombre AS categoria_nombre,
             sub.nombre AS subcategoria_nombre,
-            MAX(pr.precio) AS precio_activo,  -- ✅ Se usa MAX() en lugar de ANY_VALUE()
+            MAX(pr.precio) AS precio_activo,  
             GROUP_CONCAT(CONCAT('/uploads/productos/', i.ruta_imagen) ORDER BY i.id SEPARATOR ', ') AS imagenes
         FROM productos p
             JOIN categoria c ON p.id_categoria = c.id

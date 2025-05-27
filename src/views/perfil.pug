@@ -4,10 +4,19 @@ html(lang="es")
         meta(charset="UTF-8")
         meta(name="viewport", content="width=device-width, initial-scale=1.0")
         title Perfil | Vive Natural
-        link(rel="stylesheet", href="/css/main/index.css")
-        link(rel="stylesheet", href="/css/prueba.css")
+        link(rel="stylesheet", href="/css/main/perfil.css")
     body 
         include ./partials/nav 
-        a(href="/sesion/logout") Cerrar sesión 
-        br
-        a(href="/sesion/admin/")  Si no eres admin no puedes
+        main            
+            .lista-pedidos
+                article.iconos-sesion
+                    a(href="/sesion/logout") 
+                        img(src="/img/svg/log-out.svg", alt="Icono de cerrar sesion", width="40" height="40")
+                    a(href="/sesion/admin/") 
+                        img(src="/img/svg/home.svg", alt="Icono de una casa" width="40" height="40")
+                    a(href="/sesion/admin/perfil") 
+                        img(src="/img/svg/settings.svg", alt="Icono de ajustes" width="40" height="40")
+                h2 Mis Pedidos
+                ul( id="pedidos-ul")
+
+        script(type="module", src="/js/pages/perfilPages.js") 

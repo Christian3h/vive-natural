@@ -101,5 +101,13 @@
     flex-direction: column;
     gap: 5px;
     align-items: center;
+    
 }
 
+@media (max-width: 800px) {
+    .producto-card{
+        flex-direction: column;
+        margin: 5px;
+    }
+    
+}

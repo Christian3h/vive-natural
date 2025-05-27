@@ -44,6 +44,24 @@ import { consultarCarritoFechtch } from "../fetch/api.js";
     contenedor.insertAdjacentHTML('beforeend', productoHTML);
   });
 
+
+  fetch('/sesion/formularioPago', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ total: total, carrito: carrito }),
+    credentials: 'include'
+  })
+    .then(res => res.text()) // o .json()
+    .then(data => {
+      console.log("Respuesta:", data);
+      const contenedor = document.querySelector(".acciones"); // el lugar donde lo insertas
+      contenedor.insertAdjacentHTML("beforeend", data);
+    })
+    .catch(error => {
+      console.error("Error al enviar formulario:", error);
+    });
+
+
   // Muestra el total
   document.getElementById('total').textContent = `$${total.toLocaleString()}`;
 

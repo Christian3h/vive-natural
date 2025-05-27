@@ -2,7 +2,8 @@ import {
     obtenerClientesPendientesModels,
     obtenerClientesModels,
     obtenerClientesConPagosClientesModels,
-    crearAbonoClientesModels
+    crearAbonoClientesModels,
+    actualizarEstadosDePagoYSeguimiento
 } from "../../models/clientesModels.js";
 
 export async function obtenerClientesPendientesServices() {
@@ -25,9 +26,12 @@ export async function obtenerListaClientes(estado) {
 
 export async function clientesPagosPendientesConService() {
     try {
+        
         const datos = await obtenerClientesConPagosClientesModels();
-
+       
         const pedidosMap = new Map();
+
+        await actualizarEstadosDePagoYSeguimiento();
 
         for (const row of datos) {
             const pedidoId = row.id_pedido;
@@ -89,7 +93,7 @@ export async function clientesPagosPendientesConService() {
 
 export async function clientesPagosAbonosServices(idPago, monto, metodo) {
     try {
-        console.log(idPago, monto, metodo)
+        
         crearAbonoClientesModels(idPago, monto, metodo);
         return true
     } catch(e) {

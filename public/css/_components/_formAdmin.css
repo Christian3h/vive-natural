@@ -122,6 +122,7 @@ form .success {
 @media (max-width: 480px) {
     form {
         padding: 1rem;
+        max-height: 200dvh;
     }
 
     form button {

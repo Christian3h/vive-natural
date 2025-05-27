@@ -1,6 +1,6 @@
 
 /* Menú lateral */
-.admin-nav {
+#menu-nav {
     width: 250px;
     background-color: var(--verde-oscuro-principal);
     color: var(--blanco-roto);
@@ -22,17 +22,17 @@ main, .contenido-principal {
 }
 
 /* Navegación */
-.admin-nav ul {
+#menu-nav ul {
     list-style: none;
     padding: 0;
     margin: 0;
 }
 
-.admin-nav li {
+#menu-nav li {
     position: relative;
 }
 
-.admin-nav a {
+#menu-nav a {
     display: block;
     padding: 12px 20px;
     color: var(--blanco-roto);
@@ -41,7 +41,7 @@ main, .contenido-principal {
     font-size: var(--letra-texto-un-poquito);
 }
 
-.admin-nav a:hover {
+#menu-nav a:hover {
     background-color: var(--verde-oliva);
 }
 
@@ -82,9 +82,54 @@ li:hover > .submenu {
     border-radius: 50%;
 }
 
+.menu-responsive{
+    background-color: var(--verde-oscuro-principal);
+    display: none;
+}
+
+.menu-responsive h1{
+    color: var(--blanco-roto);
+}
+
+.menu-responsive button{
+    border: none;
+    background-color: transparent;
+    color: var(--blanco-roto);
+    font-size: var(--letra-titulo);
+    cursor: pointer;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.none{
+    display: none;
+}
+
+.menu-movil{
+    display: flex !important;
+    align-items: center !important;
+    min-height: 92dvh !important;
+    width: 100% !important;
+}
+
+.menu-movil a{
+    text-align: center !important;
+    width: 92dvw !important;
+}
+
 @media (max-width:700px){
-    header{
-       display: none;
+    #menu-nav{
+       display: none ;
+    }
+    .menu-responsive{
+        position: sticky;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        height: 8dvh;
     }
 } 
     

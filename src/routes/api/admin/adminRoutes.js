@@ -36,9 +36,9 @@ router.get("/categoria/sub", verificarAutenticacion, verificarAdmin, subCategori
 
 // rutas para administrar a los clientes desde el panel del administrador 
 
-import { clientesPendientesControllers, clientesPendientesListarControllers, clientesListarControllers, clientesPagosPendientes,clientesPagosPendientesCon, clienetsPagosAbonosControllers } from '../../../controllers/api/admin/clientesAdminControllers.js'
+import { clientesPendientesControllers, clientesPendientesListarControllers, clientesListarControllers, clientesPagosPendientes, clientesPagosPendientesCon, clienetsPagosAbonosControllers } from '../../../controllers/api/admin/clientesAdminControllers.js'
 
-router.get('/clientes/pagos', verificarAutenticacion, verificarAdmin, clientesPagosPendientes )
+router.get('/clientes/pagos', verificarAutenticacion, verificarAdmin, clientesPagosPendientes)
 
 // ruta para consultar los datos 
 
@@ -87,7 +87,13 @@ router.put('/clientes/estado-modificar', verificarAutenticacion, verificarAdmin,
 //rutas para todo el tema de pedidos 
 
 router.get('/pedidos/', verificarAutenticacion, verificarAdmin, async (req, res) => {
-    clientesServicesres.render('admin/pedidos/pedidos', {
+    res.render('admin/pedidos/pedidos', {
+        usuario: req.user
+    })
+})
+
+router.get('/pedidos/envios', verificarAutenticacion, verificarAdmin, async (req, res) => {
+    res.render('admin/pedidos/envios', {
         usuario: req.user
     })
 })
@@ -95,6 +101,7 @@ router.get('/pedidos/', verificarAutenticacion, verificarAdmin, async (req, res)
 
 //consultas para hacer eso iria mas del lado de la api todo lo que valla del lado de la api lo voy a comentar con api
 router.get('/pedidos/pendientes', verificarAutenticacion, verificarAdmin, async (req, res) => {
+    console.log(req.user)
     try {
         const [result] = await pool.query(`
            SELECT 
@@ -234,7 +241,7 @@ router.put('/pedidos/:id/estado', verificarAutenticacion, verificarAdmin, async 
         const [resultpagos] = await pool.query(`
             INSERT INTO pagos (id_pedido, monto, metodo_pago, estado, referencia, comprobante)
             VALUES (?, ?, ?, 'pendiente', ?, ?)
-        `, [id, rows[0].total , 'efectivo', null, null]);
+        `, [id, rows[0].total, 'efectivo', null, null]);
 
 
 
@@ -260,10 +267,121 @@ router.put('/pedidos/:id/estado', verificarAutenticacion, verificarAdmin, async 
 });
 
 
+router.get('/pedidos/pendientes/envios', verificarAutenticacion, verificarAdmin, async (req, res) => {
+    try {
+        const [result] = await pool.query(`
+            SELECT 
+                p.id_pedido,
+                p.fecha_creacion,
+                p.metodo_pago,
+                p.cuotas,
+                p.fecha_limite,
+                p.comentarios,
+                u.name AS nombre_cliente,
+                u.profile_picture,
+                SUM(dp.cantidad * dp.precio_unitario) AS total,
+                p.estado,
+                e.ciudad,
+                e.direccion,
+                e.numero AS telefono_contacto,
+                GROUP_CONCAT(
+                    CONCAT('Producto: ', pr.nombre, ', Cantidad: ', dp.cantidad, ', Precio: $', pe.precio)
+                    SEPARATOR ' | '
+                ) AS detalles_productos,
+                GROUP_CONCAT(pr.nombre SEPARATOR ', ') AS productos,
+                GROUP_CONCAT(pe.precio SEPARATOR ', ') AS precios,
+                GROUP_CONCAT(pr.id SEPARATOR ', ') AS ids_productos
+            FROM 
+                pedidos p
+            JOIN usuarios u ON HEX(u.id) = p.id_usuario
+            JOIN detalle_pedido dp ON p.id_pedido = dp.id_pedido
+            LEFT JOIN envios e ON p.id_envio = e.id_envio
+            JOIN productos pr ON dp.producto_id = pr.id
+            LEFT JOIN categoria cat ON pr.id_categoria = cat.id
+            LEFT JOIN subcategoria subcat ON pr.id_subcategoria = subcat.id
+            JOIN precios pe ON dp.producto_id = pe.id_producto
+            JOIN (
+                SELECT id_pedido, MAX(fecha_cambio) AS ultima_fecha
+                FROM seguimiento_pedidos
+                GROUP BY id_pedido
+            ) ult ON ult.id_pedido = p.id_pedido
+            JOIN seguimiento_pedidos sp ON sp.id_pedido = ult.id_pedido AND sp.fecha_cambio = ult.ultima_fecha
+            WHERE sp.estado = 'pendiente'
+            GROUP BY 
+                p.id_pedido, p.fecha_creacion, p.metodo_pago, p.cuotas, p.fecha_limite, p.comentarios,
+                u.name, u.profile_picture, p.estado,
+                e.ciudad, e.direccion, e.numero
+            ORDER BY p.fecha_creacion DESC;
+        `);
+        res.json(result);
+    } catch (e) {
+        console.error('Error al consultar pedidos pendientes');
+        console.error(e);
+        res.status(500).json({ error: 'Error interno del servidor' });
+    }
+});
+
+router.put('/pedidos/:id/estado/envios', verificarAutenticacion, verificarAdmin, async (req, res) => {
+    try {
+        const { id } = req.params;
+        let { estado, comentario = null } = req.body;
+        
+        // Validar estado
+        const estadosValidos = ['pendiente', 'pagado', 'cancelado', 'aprobado'];
+        if (!estadosValidos.includes(estado)) {
+            return res.status(400).json({
+                message: 'Estado inválido',
+                error: 'El estado debe ser: pendiente, pagado o cancelado'
+            });
+        }
+
+        if(estado === 'aprobado'){
+            estado = 'pagado'
+            console.log(estado + 'esto es el valor nuevo')
+        }
+
+        console.log(estado)
+        
+        // Verificar que el pedido exista
+        const [pedido] = await pool.query(
+            'SELECT * FROM pedidos WHERE id_pedido = ?',
+            [id]
+        );
+        
+        if (pedido.length === 0) {
+            return res.status(404).json({
+                message: 'Pedido no encontrado',
+                error: `No se encontró el pedido con ID ${id}`
+            });
+        }
+
+        // Insertar nuevo estado en seguimiento_pedidos
+        const [result] = await pool.query(`
+            INSERT INTO seguimiento_pedidos (id_pedido, estado, fecha_cambio, comentario)
+            VALUES (?, ?, NOW(), ?)
+        `, [id, estado, comentario]);
+        
+
+        res.json({
+            mensaje: `Estado del pedido #${id} actualizado a "${estado}" correctamente`,
+            estado: estado
+        });
+
+    } catch (error) {
+        console.error('Error al actualizar estado del pedido:', error);
+        res.status(500).json({
+            message: 'Error interno del servidor',
+            error: error.message
+        });
+    }
+});
+
+
 // rutas para las fnianzas
 
 
 import * as dashboardController from '../../../controllers/api/admin/finanzasAdminControllers.js';
+import { estaLogueado } from "../../../../public/js/fetch/api.js";
 
 
 router.get('/ventas-mes', dashboardController.getVentasDelMes);
@@ -279,5 +397,50 @@ router.get('/utilidad-bruta', dashboardController.getUtilidadBrutaDelMes);
 router.get('/top-clientes-deuda', dashboardController.getTopClientesConMasDeuda);
 
 
+// rutas para los usarios logueados
+
+
+export const getPedidosUsuario = async (req, res) => {
+    try {
+        const idHex = req.user.id; // id_usuario en formato hexadecimal
+        const [rows] = await pool.query(
+            `
+          SELECT 
+            p.id_pedido,
+            p.fecha_creacion,
+            p.metodo_pago,
+            p.precio,
+            p.estado AS estado_pedido,
+            p.comentarios AS comentarios_pedido,
+            p.fecha_actualizacion,
+            pg.estado AS estado_pago,
+            pg.monto AS monto_pago,
+            pg.metodo_pago AS metodo_pago_real,
+            sp.estado AS seguimiento_estado,
+            sp.fecha_cambio AS seguimiento_fecha,
+            sp.comentario AS comentario_seguimiento,
+            pa.monto_abono,
+            pa.fecha_abono
+          FROM pedidos p
+          LEFT JOIN pagos pg ON p.id_pedido = pg.id_pedido
+          LEFT JOIN pagos_abono pa ON pg.id_pago = pa.id_pago
+          LEFT JOIN seguimiento_pedidos sp ON p.id_pedido = sp.id_pedido
+          WHERE p.id_usuario = ?  -- id_usuario en formato binario
+          ORDER BY p.fecha_creacion DESC, sp.fecha_cambio DESC;
+        `,
+            [idHex] // Solo pasamos el id_usuario
+        );
+
+        // Retornamos los datos obtenidos
+        console.log(rows)
+        res.json(rows);
+    } catch (error) {
+        console.error('Error al obtener pedidos del usuario:', error);
+        res.status(500).json({ error: 'Error al obtener pedidos del usuario' });
+    }
+};
+
+
+router.get('/perfil', verificarAutenticacion, getPedidosUsuario)
 
 export default router;

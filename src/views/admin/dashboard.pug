@@ -14,23 +14,24 @@ html(lang="es")
         h1 Finanzas
         
         .chart-grid(style="display: grid; grid-template-columns: repeat(auto-fill, minmax(500px, 1fr)); gap: 2rem; margin-top: 2rem;")
-          #chart-ventas-mes.chart-item
-          #chart-pedidos.chart-item
+          //#chart-ventas-mes.chart-item
+          //#chart-pedidos.chart-item
           #chart-metodo-pago.chart-item
-          #chart-historial.chart-item
-          #chart-pedidos-vencidos.chart-item
-          #chart-tiempo-promedio-pago.chart-item
-          #chart-producto-mas-menos-vendido.chart-item
-          #chart-inventario-actual.chart-item
-          #chart-productos-sin-ventas.chart-item
+          //#chart-historial.chart-item
+          //#chart-pedidos-vencidos.chart-item
+          //#chart-tiempo-promedio-pago.chart-item
+          //#chart-producto-mas-menos-vendido.chart-item
+          //#chart-inventario-actual.chart-item
+          //#chart-productos-sin-ventas.chart-item
           #chart-utilidad-bruta.chart-item
-          #chart-top-clientes-deuda.chart-item
+          //#chart-top-clientes-deuda.chart-item
 
         script(type="module" src="/js/pages/admin/finanzasAdminPages.js")
         
         style.
           .chart-item {
-            width: 100%;
+            width: 90%;
+            max-width: 350px;
             height: 400px;
             background: #fff;
             border-radius: 8px;
@@ -43,3 +44,12 @@ html(lang="es")
             background: #ffecec;
             border-radius: 4px;
           }
+
+
+          @media (min-width:500px){
+            .chart-item {
+              max-width: 100%;
+            }
+          }
+
+    script(type="module", src="/js/pages/admin/responsiveDashboard.js") 

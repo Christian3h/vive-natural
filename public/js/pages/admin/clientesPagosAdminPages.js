@@ -1,27 +1,44 @@
-import {formatoCOP} from '../../utils/formatoMoneda.js';
+import { formatoCOP } from '../../utils/formatoMoneda.js';
 
-let clientesOriginales = []; // Para almacenar los clientes completos
+let clientesOriginales = [];
 
-// Función para obtener los clientes desde el backend
+// Obtener clientes desde backend
 const obtenerClientesPagos = async () => {
     try {
-        const response = await fetch('/sesion/admin/clientes/pagos', {
+        const res = await fetch('/sesion/admin/clientes/pagos', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include'
         });
-        if (!response.ok) throw new Error(`Error en la solicitud: ${response.status} - ${response.statusText}`);
-        return await response.json();
-    } catch (error) {
-        console.error('Error al obtener clientes:', error.message);
+        if (!res.ok) throw new Error(`Error ${res.status}: ${res.statusText}`);
+        return await res.json();
+    } catch (err) {
+        console.error('Error al obtener clientes:', err.message);
         return null;
     }
 };
 
-// Función para mostrar los clientes
+
+// Calcular abonos únicos
+const calcularTotalAbonado = (pagos = []) => {
+    const abonosSet = new Set();
+    return pagos.reduce((acc, pago) => {
+        if (!pago.abonos) return acc;
+        const total = pago.abonos.reduce((sum, abono) => {
+            if (!abonosSet.has(abono.id_abono)) {
+                abonosSet.add(abono.id_abono);
+                return sum + parseFloat(abono.monto_abono || 0);
+            }
+            return sum;
+        }, 0);
+        return acc + total;
+    }, 0);
+};
+
+// Mostrar clientes
 async function mostrarClientes(filtrados = null) {
     const datos = filtrados ? { clientesConPagos: filtrados } : await obtenerClientesPagos();
-    if (!datos || !datos.clientesConPagos) return;
+    if (!datos?.clientesConPagos) return;
 
     if (!filtrados) clientesOriginales = datos.clientesConPagos;
 
@@ -30,19 +47,25 @@ async function mostrarClientes(filtrados = null) {
     contenedorDeuda.innerHTML = '';
     contenedorPagados.innerHTML = '';
 
-    datos.clientesConPagos.forEach((cliente, index) => {
-        const totalAbonado = cliente.pagos?.reduce((acc, pago) => {
-            return acc + (pago.abonos?.reduce((sum, abono) => sum + parseFloat(abono.monto_abono || 0), 0) || 0);
-        }, 0) || 0;
+    const clientes = [...datos.clientesConPagos];
 
+    clientes.sort((a, b) => {
+        const deudaA = (a.precio || 0) - calcularTotalAbonado(a.pagos);
+        const deudaB = (b.precio || 0) - calcularTotalAbonado(b.pagos);
+        if (deudaA === 0 && deudaB === 0) return b.id_pedido - a.id_pedido;
+        if (deudaA === 0) return 1;
+        if (deudaB === 0) return -1;
+        return b.id_pedido - a.id_pedido;
+    });
+
+    clientes.forEach((cliente, index) => {
         const totalPedido = cliente.precio || 0;
+        const totalAbonado = calcularTotalAbonado(cliente.pagos);
         const deuda = totalPedido - totalAbonado;
 
         const clienteDiv = document.createElement('div');
         clienteDiv.className = 'cliente-card';
-        if (deuda <= 0) {
-            clienteDiv.classList.add('pagado');
-        }
+        if (deuda <= 0) clienteDiv.classList.add('pagado');
 
         clienteDiv.innerHTML = `
             <div class="cliente-header" data-index="${index}">
@@ -59,75 +82,73 @@ async function mostrarClientes(filtrados = null) {
                 </div>
                 <div class="toggle-button" data-index="${index}">▼</div>
             </div>
-
             <div id="abonos-${index}" class="abonos-container hidden">
                 ${renderAbonos(cliente.pagos || [])}
             </div>
         `;
 
-        if (deuda > 0) {
-            contenedorDeuda.appendChild(clienteDiv);
-        } else {
-            contenedorPagados.appendChild(clienteDiv);
-        }
+        (deuda > 0 ? contenedorDeuda : contenedorPagados).appendChild(clienteDiv);
     });
 }
 
-// Función para renderizar los pagos y abonos
+// Renderizar abonos
 function renderAbonos(pagos) {
-    let contenido = '';
+    console.log(pagos)
+    if (!pagos.length) return `<p class="no-pagos">Sin pagos registrados</p>`;
 
-    if (!pagos.length) {
-        contenido += `<p class="no-pagos">Sin pagos registrados</p>`;
-    } else {
-        contenido += pagos.map(pago => {
-            const totalAbonado = pago.abonos?.reduce((acc, ab) => acc + parseFloat(ab.monto_abono || 0), 0) || 0;
-            const deuda = pago.monto - totalAbonado;
+    return pagos.map(pago => {
+        const abonosUnicos = pago.abonos
+            ? Array.from(new Map(pago.abonos.map(a => [a.id_abono, a])).values())
+            : [];
 
-            return `
-                <div class="pago-card">
-                    <p class="pago-header">Pago #${pago.id_pago}</p>
-                    <ul class="abonos-list">
-                        ${pago.abonos?.length
-                            ? pago.abonos.map(abono => `
-                                <li>Abono #${abono.id_abono} - ${formatoCOP.format(abono.monto_abono)}</li>
-                            `).join('')
-                            : `<li>No hay abonos</li>`}
-                    </ul>
-                    <div class="pago-info">
-                        <p><strong>Monto pago:</strong> ${formatoCOP.format(pago.monto)}</p>
-                        <p><strong>Abonado:</strong> ${formatoCOP.format(totalAbonado)}</p>
-                        <p><strong>Debe:</strong> ${formatoCOP.format(deuda)}</p>
-                    </div>
-                    <button class="add-payment-btn" data-id="${pago.id_pago}" data-deuda="${deuda}">Agregar Pago</button>
+        const totalAbonado = abonosUnicos.reduce(
+            (acc, abono) => acc + parseFloat(abono.monto_abono || 0), 0
+        );
+
+        const deuda = pago.monto - totalAbonado;
+
+        return `
+            <div class="pago-card">
+                <p class="pago-header">Pago #${pago.id_pago}</p>
+                <ul class="abonos-list">
+                    ${abonosUnicos.length
+                        ? abonosUnicos.map(abono => `
+                            <li>Abono #${abono.id_abono} - ${formatoCOP.format(abono.monto_abono)}</li>
+                        `).join('')
+                        : `<li>No hay abonos</li>`}
+                </ul>
+                <div class="pago-info">
+                    <p><strong>Monto pago:</strong> ${formatoCOP.format(pago.monto)}</p>
+                    <p><strong>Abonado:</strong> ${formatoCOP.format(totalAbonado)}</p>
+                    <p><strong>Debe:</strong> ${formatoCOP.format(deuda)}</p>
                 </div>
-            `;
-        }).join('');
-    }
-
-    return contenido;
+                <button class="add-payment-btn" data-id="${pago.id_pago}" data-deuda="${deuda}">
+                    Agregar Pago
+                </button>
+            </div>
+        `;
+    }).join('');
 }
 
-// Función para manejar la visibilidad de los abonos
+// Alternar visibilidad de abonos
 function toggleAbonos(index) {
-    const abonosDiv = document.getElementById(`abonos-${index}`);
-    abonosDiv.classList.toggle('hidden');
+    document.getElementById(`abonos-${index}`)?.classList.toggle('hidden');
 }
 
-// Delegar eventos
-const contenedorClientes = document.getElementById('clientes-container');
-contenedorClientes.addEventListener('click', (event) => {
-    if (event.target && event.target.classList.contains('add-payment-btn')) {
-        const idPago = event.target.getAttribute('data-id');
-        const deuda = parseFloat(event.target.getAttribute('data-deuda'));
+// Eventos delegados
+document.getElementById('clientes-container').addEventListener('click', (e) => {
+    if (e.target.classList.contains('add-payment-btn')) {
+        const idPago = e.target.dataset.id;
+        const deuda = parseFloat(e.target.dataset.deuda);
         abrirModalAgregarPago(idPago, deuda);
     }
-    if (event.target && event.target.classList.contains('toggle-button')) {
-        const index = event.target.getAttribute('data-index');
-        toggleAbonos(index);
+
+    if (e.target.classList.contains('toggle-button')) {
+        toggleAbonos(e.target.dataset.index);
     }
 });
 
+// Abrir modal de pago
 function abrirModalAgregarPago(idPago, deuda) {
     const modal = document.getElementById('modalAgregarPago');
     const idPagoInput = document.getElementById('idPago');
@@ -136,7 +157,7 @@ function abrirModalAgregarPago(idPago, deuda) {
     const closeModalBtn = document.getElementById('closeModal');
 
     if (!modal || !idPagoInput || !montoInput || !montoMaxSpan || !closeModalBtn) {
-        console.warn('Alguno de los elementos del modal no se encontró en el DOM.');
+        console.warn('Faltan elementos del modal.');
         return;
     }
 
@@ -152,22 +173,17 @@ function abrirModalAgregarPago(idPago, deuda) {
     };
 }
 
-
-// Validación en tiempo real del monto
-const montoInput = document.getElementById('monto');
-montoInput.addEventListener('input', function () {
+// Validar monto en tiempo real
+document.getElementById('monto').addEventListener('input', function () {
     const max = parseFloat(this.max);
-    const valor = parseFloat(this.value);
-
-    if (valor > max) {
+    if (parseFloat(this.value) > max) {
         this.value = max;
     }
 });
 
-// Enviar el pago
-const agregarPagoForm = document.getElementById('agregarPagoForm');
-agregarPagoForm.addEventListener('submit', async function (event) {
-    event.preventDefault();
+// Enviar abono
+document.getElementById('agregarPagoForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
 
     const idPago = document.getElementById('idPago').value;
     const monto = document.getElementById('monto').value;
@@ -175,45 +191,39 @@ agregarPagoForm.addEventListener('submit', async function (event) {
 
     if (parseFloat(monto) > 0) {
         try {
-            const response = await fetch('/sesion/admin/clientes/pagos/abono', {
+            const res = await fetch('/sesion/admin/clientes/pagos/abono', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    idPago,
-                    monto,
-                    metodo
-                })
+                body: JSON.stringify({ idPago, monto, metodo })
             });
 
-            const result = await response.json();
-            if (response.ok) {
+            const result = await res.json();
+            if (res.ok) {
                 alert('Pago agregado con éxito');
-                location.reload();
+                mostrarClientes(); // recarga datos sin reload
+                document.getElementById('modalAgregarPago').style.display = 'none';
             } else {
                 alert('Error al agregar el pago');
             }
-        } catch (error) {
-            console.error('Error al agregar el pago:', error);
+        } catch (err) {
+            console.error('Error al agregar el pago:', err);
         }
     } else {
         alert('El monto debe ser mayor a cero');
     }
 });
 
-// Función de búsqueda de clientes por nombre
+// Buscar clientes
 export function buscarClientesPorNombre() {
     const input = document.getElementById('buscador-clientes');
     input.addEventListener('input', () => {
         const valor = input.value.trim().toLowerCase();
-        const filtrados = clientesOriginales.filter(cliente =>
-            cliente.usuario.name.toLowerCase().includes(valor)
+        const filtrados = clientesOriginales.filter(c =>
+            c.usuario.name.toLowerCase().includes(valor)
         );
-
         mostrarClientes(filtrados);
     });
 }
 
-// Inicialización
-mostrarClientes().then(() => {
-    buscarClientesPorNombre();
-});
+// Inicializar
+mostrarClientes().then(buscarClientesPorNombre);

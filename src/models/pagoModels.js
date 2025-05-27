@@ -1,3 +1,4 @@
+
 import pool from "./bd.js";
 
 export async function consultarEstadoCliente(id_usuario) {

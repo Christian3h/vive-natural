@@ -1,16 +1,16 @@
-<!DOCTYPE html>
-<html lang="es">
+<!DOCTYPE html> <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Paleta de Colores - Las gallinas de doña Susana</title>
+    <!-- esto es un comentario -->
     <style>
         :root {
             --amarillo-granjero: #E8B020;
             --marron-madera: #5C4033;
             --rojo-gallina: #A52A2A;
             --beige-huevo: #F5E7D3;
-            --verde-pasto: #556B2F;
+           erde-pasto: #556B2F;
             --negro-vintage: #2D291A; /* Negro añadido */
         }
 
@@ -99,12 +99,13 @@
                 <div>#F5E7D3</div>
             </div>
         </div>
-        
+          <div class="colo<div class="colo
         <!-- Color 5 -->
         <div class="color" style="background-color: #556B2F;">
             <div class="color-info">
                 <div class="color-name">Verde Pasto</div>
                 <div>#556B2F</div>
+
             </div>
         </div>
         
@@ -118,3 +119,19 @@
     </div>
 </body>
 </html>
+export async function vaciarCarritoFetch() {                                                                         
+    try {                                                                                                            
+        const response = await fetch('/api/carrito/vaciar-carrito', {                                                
+            method: 'DELETE',                                                                                        
+            headers: { 'Content-Type': 'application/json' },                                                         
+            credentials: 'include'                                                                                   
+        });                                                                                                          
+        if (!response.ok) throw new Error(`Error en la solicitud: ${response.status} - ${response.statusText}`);     
+        return await response.json();                                                                                
+    } catch (error) {                                                                                                
+        console.error('Error al vaciar carrito:', error.message);                                                    
+        return null;                                                                                                 
+    }                                                                                                                
+}                                                                                                                    
+                                                                                                                     
+                                                                                                                     
