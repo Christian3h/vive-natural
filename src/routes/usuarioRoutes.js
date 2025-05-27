@@ -9,8 +9,9 @@ import {
     carritoUsuarioControllers,
     tiendaUsuarioControllers,
     contactoUsuarioControllers,
-    infoUsuarioControllers
-} from '../controllers/usuarioControllers.js'
+    infoUsuarioControllers,
+    perfilSettingsControllers
+} from '../controllers/front/usuarioControllers.js'
 
 router.get('/', inicioUsuarioControllers);
 
@@ -18,7 +19,9 @@ router.get('/producto/:id', infoProductoUsuarioControllers)
 
 // perfil 
 
-router.get('/perfil', perfilUsuarioControllers)
+router.get('/perfil', verificarAutenticacion, perfilUsuarioControllers)
+
+router.get('/perfil/settings', verificarAutenticacion, perfilSettingsControllers)
 
 // carrito de compras 
 router.get('/carrito', carritoUsuarioControllers)
@@ -94,6 +97,7 @@ router.get('/procesando', validarUsuario, async (req, res) => {
 import { insertarStock } from '../models/productoModels.js';
 import { Console } from 'console';
 import e from 'express';
+import { verificarAutenticacion } from '../middlewares/sesionMiddlewares.js';
 
 async function procesarPedido(req, res) {
     const id_usuario = req.user.id;

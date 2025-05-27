@@ -24,7 +24,7 @@ export async function carritoUsuarioControllers(req, res) {
     })
 }
 
-import {consultarCategoria} from '../models/productoModels.js'
+import {consultarCategoria} from '../../models/productoModels.js'
 
 export async function tiendaUsuarioControllers(req, res) {
     const categorias = await consultarCategoria()
@@ -41,6 +41,12 @@ export async function contactoUsuarioControllers(req, res) {
 
 export async function infoUsuarioControllers(req, res){
     res.render('info', {
+        usuario: req.user
+    })
+}
+
+export async function perfilSettingsControllers(req, res){
+    res.render('perfilSettings', {
         usuario: req.user
     })
 }
