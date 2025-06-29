@@ -26,9 +26,17 @@ import { helmetMiddleware } from './config/helmet.js'
 app.use(sessionMiddleware)
 app.use(helmetMiddleware);
 
+app.use((req, res, next) => {
+    res.setHeader("Content-Security-Policy", "script-src 'self' https://www.gstatic.com https://www.googleapis.com;");
+    next();
+  });
+  
+
 // Inicializar Passport
 app.use(passport.initialize())
 app.use(passport.session())
+
+// esto es un comentario jeje xd 
 
 // Configuración del motor de plantillas
 app.set('view engine', 'pug');
@@ -41,13 +49,13 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 // rutas 
-import usuarioRoutes from './routes/usuarioRoutes.js'
-import sesionRoutes from './routes/sesionRoutes.js'
-import apiRoutes from './routes/api/api.js'
+import api from './routes/api/api.js'
 
-app.use('/', usuarioRoutes)
-app.use('/sesion', sesionRoutes)
-app.use('/api', apiRoutes)
+app.use('/api', api)
+
+import views from './routes/views/index.js'
+
+app.use('/', views)
 
 // Iniciar servidor
 app.listen(port, () => {

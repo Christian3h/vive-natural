@@ -3,6 +3,7 @@ import mysql from 'mysql2/promise'
 const pool = mysql.createPool({
   host: 'localhost',
   user: 'root',
+  password: 'Mascotaperla2018',
   database: 'vive_natural',
   waitForConnections: true,
   connectionLimit: 10,

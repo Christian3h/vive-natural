@@ -1,23 +1,23 @@
 {
-  "name": "vive-natural",
-  "type": "module",
-  "version": "1.0.0",
-  "description": "pagina web para las vitaminas de patricia hurtado",
-  "main": "src/app.js",
-  "scripts": {
-    "test": "node --watch src/app.js"
-  },
-  "author": "Christian M.",
-  "license": "ISC",
-  "dependencies": {
-    "dotenv": "16.4.7",
-    "express": "4.21.2",
-    "express-session": "1.18.1",
-    "helmet": "8.1.0",
-    "multer": "1.4.5-lts.1",
-    "mysql2": "3.13.0",
-    "passport": "0.7.0",
-    "passport-google-oauth20": "2.0.0",
-    "pug": "3.0.3"
+    "name": "vive-natural",
+    "type": "module",
+    "version": "1.0.0",
+    "description": "pagina web para las vitaminas de patricia hurtado",
+    "main": "src/app.js",
+    "scripts": {
+      "test": "node --watch src/app.js"
+    },
+    "author": "Christian M.",
+    "license": "ISC",
+    "dependencies": {
+      "dotenv": "16.4.7",
+      "express": "4.21.2",
+      "express-session": "1.18.1",
+      "helmet": "8.1.0",
+      "multer": "1.4.5-lts.1",
+      "mysql2": "3.13.0",
+      "passport": "0.7.0",
+      "passport-google-oauth20": "2.0.0",
+      "pug": "3.0.3"
+    }
   }
-}

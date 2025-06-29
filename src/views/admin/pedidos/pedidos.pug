@@ -11,8 +11,16 @@ html(lang="es")
     main 
         article 
             h1 Pedidos Pendientes
+            p.texto-explicativo
+                | Aquí puedes ver todos los pedidos que están pendientes de aprobación. Revisa los datos del cliente, los productos solicitados y aprueba o cancela el pedido según corresponda.
             #pedidos-container
                 .loading Cargando pedidos pendientes...
+            hr
+            h2 Compras Realizadas
+            p.texto-explicativo
+                | Aquí puedes ver el historial de todas las compras ya aprobadas y pagadas. Útil para reportes y control de ventas.
+            #compras-realizadas-container
+                .loading Cargando compras realizadas...
 
     script(type="module", src="../../../js/pages/admin/pedidosAdminPages.js") 
 

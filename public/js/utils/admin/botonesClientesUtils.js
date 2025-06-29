@@ -1,5 +1,6 @@
 
 import { actualizarEstadoCliente } from '../../fetch/admin/clientesFetch.js';
+import {recargarContenedorEstado} from '../../components/admin/insertarClientesComponents.js' 
 
 export function botonesClientesUtils() {
     document.addEventListener("click", async (event) => {
@@ -11,7 +12,7 @@ export function botonesClientesUtils() {
                 const accion = event.target.classList.contains("btn-primary") ? 'aprobado' : 'rechazado';
                 const clienteDiv = event.target.closest('.cliente');
 
-                // Animación
+                // Animación de transición
                 clienteDiv.style.transition = 'all 0.3s ease';
                 clienteDiv.style.opacity = '0';
                 clienteDiv.style.height = '0';
@@ -21,11 +22,11 @@ export function botonesClientesUtils() {
 
                 // Enviar petición al backend
                 await actualizarEstadoCliente(id, accion);
-                
-                // Eliminar después de la animación
-                setTimeout(() => {
-                    clienteDiv.remove();
-                   // mostrarNotificacion(`Cliente ${accion} correctamente`, 'success');
+
+                // Eliminar después de la animación y recargar el contenedor del nuevo estado
+                setTimeout(async () => {
+                    clienteDiv.remove(); // Eliminar el cliente del DOM actual
+                    await recargarContenedorEstado(accion); // Recargar contenedor con el nuevo estado
                 }, 300);
             }
         } catch (error) {
@@ -34,3 +35,4 @@ export function botonesClientesUtils() {
         }
     });
 }
+

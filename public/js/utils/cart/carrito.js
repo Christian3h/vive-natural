@@ -4,16 +4,16 @@ import {
     cargarCarritoFetch, 
     estaLogueado ,
     consultarCarritoFechtch
-} from '../../fetch/api.js';
+} from '../../fetch/cart/cartFetch.js';
 
 import { insertarCantidadCarrito } from '../../components/nav.js';
 
 function getCarritoLocal() {
     const raw = localStorage.getItem("carrito");
     if (!raw || raw === "undefined" || raw === "null") return [];
-
     try {
-        return JSON.parse(raw);
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
     } catch (e) {
         console.warn("Carrito corrupto en localStorage, limpiando...");
         localStorage.removeItem("carrito");
@@ -30,6 +30,9 @@ export async function validarStockCarrito() {
     const carrito = getCarritoLocal();
     try {
         const data = await validarStockCarritoFetch(carrito);
+        if (data == null) {
+            return { carrito };
+        }
         return data;
     } catch (error) {
         console.error("Error al validar stock del carrito:", error);
@@ -74,8 +77,14 @@ export async function cargarCarrito() {
 
     try {
         const respuesta = await cargarCarritoFetch(carrito);
-        setCarritoLocal(respuesta);
-        return respuesta;
+        if (respuesta !== null) {
+            setCarritoLocal(respuesta);
+            return respuesta;
+        } else {
+            // Si la carga al backend falla, devolvemos el carrito local sin modificar
+            // y no sobrescribimos el localStorage con 'null'.
+            return carrito;
+        }
     } catch (error) {
         console.error("Error al cargar carrito en backend:", error);
         return carrito;
@@ -138,9 +147,10 @@ export async function cargarCarritoAlIniciarSesion() {
     const carritoMap = new Map();
     let carritoFinal;
 
-    // Agregar backend
-    carritoBackend.forEach(p => carritoMap.set(p.productoId, { ...p }));
-
+    if (Array.isArray(carritoBackend)) {
+        carritoBackend.forEach(p => carritoMap.set(p.productoId, { ...p }));
+    }
+    
     // Fusionar local
     carritoValidado.forEach(p => {
         if (carritoMap.has(p.productoId)) {

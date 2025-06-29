@@ -16,6 +16,14 @@ html(lang="es")
                     label(for="descripcionProducto") Descripcion del producto 
                     textarea(name="descripcionProducto" id="descripcionProducto")  #{producto.descripcion}
 
+                    label(for="descripcionLarga") Descripción larga del producto (Markdown)
+                    textarea(
+                        name="descripcionLarga" 
+                        id="descripcionLarga" 
+                        placeholder="## Título\n- Punto 1\n- Punto 2"
+                        rows="12"
+                    ) #{producto.descripcion_larga || ''}
+
                     label(for="categoria") Categoría del producto
                     select(name="categoria" id="categoria")
                         if producto.categorias
@@ -45,8 +53,9 @@ html(lang="es")
                     label(for="stockProducto") Stock del producto 
                     input(type="number" name="stockProducto" id="stockProducto" value=`${producto.stock}`)
 
-                    label(for="imagenProducto") Imagen del producto 
-                    input(type="file" name="imagenProducto" id="imagenProducto")
+                    label(for="imagenProducto") Imágenes del producto 
+                    input(type="file" name="imagenProducto" id="imagenProducto" multiple)
+
 
                     button(type="submit") Editar producto
 

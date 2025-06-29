@@ -1,0 +1,77 @@
+doctype html
+html(lang="es")
+    head
+        meta(charset="UTF-8")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        title Vive natural 
+        link(rel="stylesheet", href="/css/main/dashboard.css")
+        link(rel="stylesheet", href="/css/main/pagos_dashboard.css")
+    body 
+        // menu de administrador
+        include ../../partials/menuAdmin.pug
+        main 
+            article 
+                .search-container
+                    input(
+                        type="text"
+                        id="buscador-clientes"
+                        placeholder="Buscar cliente por nombre..."
+                        class="search-input"
+                    )
+                button#btn-crear-temporal.btn Crear usuario temporal
+                p.texto-explicativo
+                    | Puedes crear un usuario temporal para registrar compras de clientes que no tienen cuenta. Solo se requiere nombre y número.
+
+                #clientes-container
+                    h2 Clientes con Deuda
+                    #clientes-deuda-container
+                        
+                    .separador 
+
+                    h2 Clientes Pagados
+                    #clientes-pagados-container
+                        
+                #modalAgregarPago.modal(style="display: none;")
+                    .modal-content
+                        span#closeModal.close &times;
+                        h2 Agregar Pago
+                        
+                        // Formulario para agregar pago
+                        form#agregarPagoForm
+                            .form-group
+                                label(for="idPago") ID Pago
+                                input(type="text" id="idPago" name="idPago" readonly)
+                            
+                            .form-group
+                                label(for="monto") Monto
+                                input(type="number" id="monto" name="monto" min="0" step="0.01" required)
+                                small#montoMax
+                            
+                            .form-group
+                                label(for="metodo") Método de Pago
+                                select#metodo(name="metodo" required)
+                                    option(value="efectivo") Efectivo
+                                    option(value="tarjeta") Tarjeta
+                                    option(value="transferencia") Transferencia
+                            
+                            button(type="submit") Agregar Pago
+
+                // Modal para crear usuario temporal
+                #modalCrearTemporal.modal(style="display: none;")
+                    .modal-content
+                        span#closeModalTemporal.close &times;
+                        h2 Crear Usuario Temporal
+                        form#formCrearTemporal
+                            .form-group
+                                label(for="nombreTemporal") Nombre
+                                input(type="text" id="nombreTemporal" name="nombreTemporal" required)
+                            .form-group
+                                label(for="numeroTemporal") Número
+                                input(type="text" id="numeroTemporal" name="numeroTemporal" required)
+                            button(type="submit") Crear Usuario Temporal
+
+            style. 
+               
+
+
+    script(type="module", src="/js/pages/admin/clientesPagosAdminPages.js") 

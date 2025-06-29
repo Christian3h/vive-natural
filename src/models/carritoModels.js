@@ -1,5 +1,7 @@
 import pool from './bd.js';
 
+//lina modificada 
+//COALESCE(stk.cantidad, 0) AS stock_db,
 export async function validarProductosModels(productos) {
     const errores = [];
 
@@ -12,8 +14,8 @@ export async function validarProductosModels(productos) {
                 HEX(p.id) AS producto_id,
                 p.nombre AS nombre_db,
                 p.descripcion AS descripcion_db,
-                COALESCE(MAX(pr.precio), 0) AS precio_db,
-                COALESCE(stk.cantidad, 0) AS stock_db,
+                COALESCE(MAX(pr.precio), 0) AS precio_db,  
+                COALESCE(MAX(stk.cantidad), 0) AS stock_db,
                 GROUP_CONCAT(DISTINCT CONCAT('/uploads/productos/', i.ruta_imagen) ORDER BY i.id SEPARATOR ',') AS imagenes_db
             FROM productos p
             LEFT JOIN precios pr ON p.id = pr.id_producto AND pr.activo = 1
@@ -57,7 +59,7 @@ export async function validarProductosModels(productos) {
                 errores.push(`Las imágenes del producto ${productoId} no coinciden.`);
             }
         } catch (e) {
-            console.error("Error al comparar imágenes: ", e);
+            //console.error("Error al comparar imágenes: ", e);
         }
     }
 
@@ -126,6 +128,8 @@ export async function cargarCarritoModels(carrito, userId) {
     }
 }
 
+//linea modificada 
+//COALESCE(stk.cantidad, 0) AS stock,
 
 export async function obtenerCarritoModels(userId) {
     const [rows] = await pool.query(
@@ -134,7 +138,7 @@ export async function obtenerCarritoModels(userId) {
             c.cantidad,
             p.nombre,
             p.descripcion,
-            COALESCE(stk.cantidad, 0) AS stock,
+            COALESCE(MAX(stk.cantidad), 0) AS stock,
             COALESCE(MAX(pr.precio), 0) AS precio,
             GROUP_CONCAT(DISTINCT CONCAT('/uploads/productos/', i.ruta_imagen) ORDER BY i.id SEPARATOR ',') AS imagenes
         FROM carrito_usuarios c

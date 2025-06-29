@@ -18,6 +18,12 @@ export async function insertarCantidadCarrito() {
 
  insertarCantidadCarrito();
 
+try {
+    cargarCarritoAlIniciarSesion();
+} catch (e) {
+    console.log('mi chino error')
+}
+
 
 const menuToggle = document.getElementById('menu-toggle');
 let menu = true;
@@ -40,3 +46,14 @@ menuToggle?.addEventListener('click', () => {
         document.body.style.overflow = 'scroll';
     }
 });
+
+
+  window.addEventListener("scroll", function () {
+    const nav = document.querySelector("header");
+    if (window.scrollY > 50) {
+      nav.classList.add("scrolled");
+    } else {
+      nav.classList.remove("scrolled");
+    }
+  });
+

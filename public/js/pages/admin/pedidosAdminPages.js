@@ -1,30 +1,17 @@
+import { fetchPedidosAdminPendientes, marcarPedidoAdmin } from '../../fetch/pages/admin/pedidosAdminFetch.js';
+
 async function obtenerPedidosPendientes() {
     try {
-        const response = await fetch('/sesion/admin/pedidos/pendientes', {
-            headers: {
-                'Authorization': 'Bearer ' + (localStorage.getItem('authToken') || '')
-            }
-        });
+        const data = await fetchPedidosAdminPendientes();
 
-        
-
-        // Verificar si la respuesta es exitosa
-        if (!response.ok) {
-            throw new Error(`Error HTTP: ${response.status}`);
-        }
-
-        const data = await response.json();
-
-        // Verificar si hay datos y procesarlos
         if (data && data.length > 0) {
             renderPedidosPendientes(data);
         } else {
             renderNoPedidosPendientes();
         }
-        console.log(data)
         return data;
     } catch (error) {
-        c
+        console.error('Error en obtenerPedidosPendientes:', error);
         renderError('No se pudieron cargar los pedidos pendientes. Por favor intenta nuevamente.');
     }
 }
@@ -42,11 +29,43 @@ function renderError(message) {
 }
 
 // Función para renderizar los pedidos pendientes
-// Función para renderizar los pedidos pendientes
 function renderPedidosPendientes(pedidos) {
     const container = document.getElementById('pedidos-container');
     container.innerHTML = '';  // Limpiar contenedor
+
     pedidos.forEach(pedido => {
+        const productosAgrupados = {};
+        const nombresProductos = pedido.productos.split(', ');
+        const detallesProductos = pedido.detalles_productos.split(' | ');
+        const precios = pedido.precios.split(', ');
+
+        nombresProductos.forEach((producto, index) => {
+            const cantidadStr = detallesProductos[index].split(', ')[1];
+            const cantidad = parseInt(cantidadStr.split(': ')[1]);
+
+            if (isNaN(cantidad)) {
+                console.error(`Error: La cantidad para el producto "${producto}" no es válida.`);
+                return;
+            }
+
+            if (productosAgrupados[producto]) {
+                productosAgrupados[producto].cantidad += cantidad;
+            } else {
+                productosAgrupados[producto] = {
+                    cantidad: cantidad,
+                    precio: precios[index],
+                    detalle: detallesProductos[index]
+                };
+            }
+        });
+
+        let productosHtml = '';
+        Object.keys(productosAgrupados).forEach(producto => {
+            const info = productosAgrupados[producto];
+            productosHtml += `
+                <p>Producto: ${producto}, Cantidad: ${info.cantidad}, Precio: $${info.precio}</p>
+            `;
+        });
 
         const pedidoElement = document.createElement('div');
         pedidoElement.className = 'pedido-card';
@@ -88,9 +107,14 @@ function renderPedidosPendientes(pedidos) {
                 </div>
             ` : ''}
 
+            <div class="productos-lista">
+                <h4>Productos:</h4>
+                ${productosHtml}
+            </div>
+
             <div class="btn-container">
                 <button class="btn btn-entregar")">
-                    <i class="fas fa-check"></i> Pedido Entregado
+                    <i class="fas fa-check"></i> Pedido aprobado
                 </button>
                 <button class="btn btn-cancelar")">
                     <i class="fas fa-times"></i> Cancelar Pedido
@@ -98,20 +122,16 @@ function renderPedidosPendientes(pedidos) {
             </div>
         `;
 
-        // Agregar evento a los botones después de insertarlos
         const btnEntregar = pedidoElement.querySelector('.btn-entregar');
         const btnCancelar = pedidoElement.querySelector('.btn-cancelar');
 
-        btnEntregar.addEventListener('click', () => marcarPedido(pedido.id_pedido, 'entregado'));
+        btnEntregar.addEventListener('click', () => marcarPedido(pedido.id_pedido, 'aprobado'));
         btnCancelar.addEventListener('click', () => marcarPedido(pedido.id_pedido, 'cancelado'));
-
 
         container.appendChild(pedidoElement);
     });
 }
 
-
-// Función para formatear la fecha
 function formatDate(dateString) {
     if (!dateString) return 'N/A';
     const options = {
@@ -130,25 +150,7 @@ async function marcarPedido(pedidoId, nuevoEstado) {
     }
 
     try {
-        const response = await fetch(`/sesion/admin/pedidos/${pedidoId}/estado`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + (localStorage.getItem('authToken') || '')
-            },
-            body: JSON.stringify({
-                estado: nuevoEstado
-            })
-        });
-
-
-
-        if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.message || 'Error al actualizar el pedido');
-        }
-
-        const result = await response.json();
+        const result = await marcarPedidoAdmin(pedidoId, nuevoEstado); // Usar la nueva función
         alert(result.mensaje);
         location.reload();
     } catch (error) {
@@ -157,5 +159,4 @@ async function marcarPedido(pedidoId, nuevoEstado) {
     }
 }
 
-// Llamar a la función al cargar el documento
 obtenerPedidosPendientes();

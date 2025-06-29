@@ -1,4 +1,4 @@
-import { obtenerProducto } from '../../fetch/api.js';
+import { obtenerProducto } from '../../fetch/products/productsFetch.js';
 import { crearProductoCard } from './insertarProductos.js';
 
 const id = window.location.href.split('/').pop();

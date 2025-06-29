@@ -1,0 +1,48 @@
+doctype html
+html(lang="es")
+    head
+        meta(charset="UTF-8")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        title Configuración del Perfil | Vive Natural
+        link(rel="stylesheet", href="/css/main/perfil-settings.css")
+    body 
+        include ./partials/nav
+        main
+            div.settings-container
+                div.settings-header
+                    h1 Configuración del Perfil
+
+                // Información Personal
+                section.settings-section
+                    h2 Información Personal
+                    div.info-display
+                        if usuarioDetalles && usuarioDetalles.profile_picture
+                            img(src=usuarioDetalles.profile_picture, alt="Foto de perfil", class="profile-settings-img")
+                        p #[strong Nombre:] #{usuarioDetalles ? usuarioDetalles.name : 'N/A'}
+                        p #[strong Correo Electrónico:] #{usuarioDetalles ? usuarioDetalles.email : 'N/A'}
+                        p #[strong Estado de la Cuenta:] #{estadoAprobacion ? estadoAprobacion.charAt(0).toUpperCase() + estadoAprobacion.slice(1) : 'N/A'}
+
+                // Datos de Envío
+                section.settings-section
+                    h2 Datos de Envío
+                    form.settings-form(action="/perfil/settings/editar-envio", method="POST")
+                        div.form-group
+                            label(for="nombre") Nombre Completo
+                            input(type="text", id="nombre", name="nombre", value=datosEnvio && datosEnvio.nombre ? datosEnvio.nombre : '', required)
+
+                        div.form-group
+                            label(for="numero") Número de Teléfono
+                            input(type="tel", id="numero", name="numero", value=datosEnvio && datosEnvio.numero ? datosEnvio.numero : '', required)
+
+                        div.form-group
+                            label(for="ciudad") Ciudad
+                            input(type="text", id="ciudad", name="ciudad", value=datosEnvio && datosEnvio.ciudad ? datosEnvio.ciudad : '', required)
+
+                        div.form-group
+                            label(for="direccion") Dirección
+                            input(type="text", id="direccion", name="direccion", value=datosEnvio && datosEnvio.direccion ? datosEnvio.direccion : '', required)
+
+                        div.settings-actions
+                            button.btn.btn-primary(type="submit") Guardar Datos de Envío
+
+        include ./partials/footer 

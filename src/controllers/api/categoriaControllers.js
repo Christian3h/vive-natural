@@ -4,7 +4,7 @@ import{crearCategoriaServices, crearSubCategoriaServices} from '../../services/a
 export async function crearCategoria(req, res) {
     try {
         const resultado = await crearCategoriaServices(req)
-        res.redirect('/sesion/admin/productos/')
+        res.redirect('/admin/products/overview')
        
     } catch (error) {
         console.log('Error al crear la categoria:', error);
@@ -18,7 +18,7 @@ export async function crearCategoria(req, res) {
 export async function crearSubCategoria(req, res) {
     try {
         const resultado = await crearSubCategoriaServices(req)
-        res.redirect('/sesion/admin/productos/')
+        res.redirect('/admin/products/overview')
         
     } catch (error) {
         console.log('Error al crear la subcategoria:', error);

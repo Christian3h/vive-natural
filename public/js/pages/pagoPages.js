@@ -1,6 +1,24 @@
-import { consultarCarritoFechtch } from "../fetch/api.js";
+import { consultarCarritoFechtch } from "../fetch/index.js";
+import {initSlider} from "../components/cart/sliderCart.js"
+import { fetchFormularioPago } from '../fetch/pages/pagoPagesFetch.js';
 
 (async function main() {
+  initSlider();
+  // Cierra otros tooltips si se abre uno nuevo
+  function toggleTooltip(el) {
+    document.querySelectorAll('.tooltip-container').forEach(t => {
+      if (t !== el) t.classList.remove('show');
+    });
+    el.classList.toggle('show');
+  }
+
+  // Cierra el tooltip al tocar fuera
+  document.addEventListener('click', function (e) {
+    document.querySelectorAll('.tooltip-container').forEach(t => {
+      if (!t.contains(e.target)) t.classList.remove('show');
+    });
+  });
+
   const carrito = await consultarCarritoFechtch();
   if (!carrito || carrito.length === 0) {
     return window.location.href = '/carrito';
@@ -27,6 +45,16 @@ import { consultarCarritoFechtch } from "../fetch/api.js";
     `;
     contenedor.insertAdjacentHTML('beforeend', productoHTML);
   });
+
+
+  const data = await fetchFormularioPago(total, carrito);
+  if (data) {
+    const contenedorAcciones = document.querySelector(".acciones");
+    contenedorAcciones.insertAdjacentHTML("beforeend", data);
+  } else {
+    console.error("No se pudo cargar el formulario de pago.");
+  }
+
 
   // Muestra el total
   document.getElementById('total').textContent = `$${total.toLocaleString()}`;
@@ -74,10 +102,6 @@ function setupModalPago(total) {
 
     modal.classList.add('oculto');
 
-    // Aquí puedes llamar a una función para verificar datos de envío
-    console.log({ metodo, cuotas, fechaLimite });
-
-    // 👉 Luego puedes continuar con: verificarDatosDeEnvio(metodo)
     // Por ahora, solo redirige a una página temporal de "procesando"
     window.location.href = `/procesando?metodo=${metodo}&cuotas=${cuotas}&fecha=${fechaLimite}`;
   });

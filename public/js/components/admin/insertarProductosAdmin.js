@@ -21,6 +21,9 @@ export async function insertarProductosAdmin(productos) {
             imagenes = [...new Set(imagenes.map(img => img.trim()))]; // Limpia duplicados y espacios
         }
 
+        // depurar
+        // console.log("ID del producto (hex):", producto.producto_id_hex); 
+
         productoCard.innerHTML = `
             <div class="text-container">
                 <h3>${producto.producto_nombre}</h3>

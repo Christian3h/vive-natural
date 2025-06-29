@@ -8,8 +8,10 @@
 @import "../_components/_nav.css";
 @import "../_components/_footer.css";
 
-
 /* archivo para el fondo el color de fondo para todo el archivo */
 @import "../_layout/_fondo.css";
+
+/* estilos específicos para la página de contacto */
+@import "../_layout/_contacto.css";
 
 

@@ -21,3 +21,5 @@
 
 /*estilso para el slider de los productos*/
 @import "../_components/_sliderProducto.css";
+
+@import url(../_layout/_responsive_dashboard.css);

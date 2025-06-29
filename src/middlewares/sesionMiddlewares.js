@@ -1,10 +1,18 @@
 
+const verificarAutenticacionApi = (req, res, next) => {
+    if (!req.isAuthenticated()) {
+        return res.status(202).json({ error: 'No autorizado' });
+    }
+    next();
+};
+
 const verificarAutenticacion = (req, res, next) => {
     if (!req.isAuthenticated()) {
-        return res.redirect('/'); // 🔹 Redirige si el usuario no está autenticado
+        return res.redirect('/'); 
     }
-    next(); // 🔹 Continúa con la ejecución si está autenticado
+    next();
 };
+
 
 const verificarAdmin = (req, res, next) => {
     if (!req.isAuthenticated() || req.user.rol !== 'admin') {
@@ -13,4 +21,4 @@ const verificarAdmin = (req, res, next) => {
     next(); // 🔹 Continúa con la ejecución si es admin
 };
 
-export { verificarAutenticacion, verificarAdmin };
+export { verificarAutenticacion, verificarAdmin, verificarAutenticacionApi };

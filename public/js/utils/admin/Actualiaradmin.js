@@ -1,3 +1,5 @@
+import { updateProductAdmin } from '../../fetch/utils/admin/actualizarAdminFetch.js';
+
 document.addEventListener("DOMContentLoaded", () => {
     const form = document.querySelector("form");
     const deleteButtons = document.querySelectorAll(".fotos-editar button");
@@ -5,7 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Obtener ID del producto desde la URL
     const urlSegments = window.location.pathname.split("/");
-    const productoId = urlSegments[urlSegments.length - 1];
+    const productoId = urlSegments[urlSegments.length - 2];
 
     // Marcar imágenes para eliminar
     deleteButtons.forEach(button => {
@@ -26,6 +28,11 @@ document.addEventListener("DOMContentLoaded", () => {
         // Obtener valores del formulario manualmente
         formData.append("nombre", form.querySelector("#nombreProducto").value.trim());
         formData.append("descripcion", form.querySelector("#descripcionProducto").value.trim());
+        
+        const descripcionLargaValue = form.querySelector("#descripcionLarga").value.trim();
+        console.log('Valor capturado para descripcion_larga en frontend:', descripcionLargaValue);
+        formData.append("descripcion_larga", descripcionLargaValue);
+
         formData.append("categoria", form.querySelector("#categoria").value.trim());
         formData.append("id_subcategoria", form.querySelector("#subCategoriaProducto").value.trim());
         formData.append("precio", form.querySelector("#precioProducto").value.trim());
@@ -33,7 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Agregar imágenes a eliminar
         if (deletedImages.size > 0) {
-            formData.append("imagenes_delete", Array.from(deletedImages).join(","));
+            formData.append("imagenes_delete", JSON.stringify(Array.from(deletedImages)));
         }
 
         // 📌 **Corrección: Enviar imágenes correctamente**
@@ -43,31 +50,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 formData.append("imagenes", fileInput.files[i]); // ✅ Enviar correctamente la imagen
             }
         }
-
-        // Debug: Mostrar datos enviados
-        console.log("📤 Datos enviados:");
-        for (let pair of formData.entries()) {
-            console.log(pair[0], pair[1]);
-        }
-        
-        const url = `/api/producto/actualizarProducto/${productoId}`;
-        
         try {
-            const response = await fetch(url, {
-                method: "PATCH",
-                credentials: 'include',
-                body: formData
-            });
-
-            const responseText = await response.text(); // Obtener respuesta como texto
-
-            if (!response.ok) {
-                throw new Error(`Error al actualizar el producto: ${response.status} - ${responseText}`);
-            }
-
-            const data = JSON.parse(responseText);
+            const data = await updateProductAdmin(productoId, formData); // Usar la nueva función
             alert("✅ Producto actualizado correctamente");
-            window.location.href = `/sesion/admin/productos`;
+            window.location.href = `/admin/products/overview`;
         } catch (error) {
             console.error("🚨 Error:", error);
             alert("❌ Hubo un problema al actualizar el producto. Revisa la consola para más detalles.");

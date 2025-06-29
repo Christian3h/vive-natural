@@ -4,7 +4,7 @@ import {botonProductoCom} from "../components/products/botonProducto.js";
 import {carritoEvent} from "../components/cart/carrito.js";
 import {initSlider} from "../components/cart/sliderCart.js";
 
-import {animacionProducto} from "../components/products/productoAnimation.js"
+//import {animacionProducto} from "../components/products/productoAnimation.js"
 //import {cargarCarritoAlIniciarSesion} from "../utils/cart/carrito.js";
 
 (async function iniciarApp() {

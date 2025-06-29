@@ -1,0 +1,3 @@
+bitácora de 17 de junio 
+
+ya arregle las rutas a las vista, falta probar que todo funcione y corregir el tema de las fotos que esta fallando ademas de que ya puedo tener via libre para hacer de manera correcta la parte de ventas y autorizaciones del carrito 

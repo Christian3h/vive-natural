@@ -1,15 +1,13 @@
-
-
 // boton para eliminar los productos 
 
-import { eliminarProductoFetch } from "../../fetch/productoFetchAdmin.js";
+import { eliminarProductoFetch } from "../../fetch/products/productoFetchAdmin.js";
 
 export async function eliminarProductoBoton(){
  
     document.addEventListener("click", (event) => {
         if (event.target.classList.contains("Editar")) {
             const id = event.target.getAttribute("data-id");
-            window.location.href = `/sesion/admin/producto/${id}`;
+            window.location.href = `/admin/products/${id}/info`;
         }
         if(event.target.classList.contains("Eliminar")) {
             const id = event.target.getAttribute("data-id");

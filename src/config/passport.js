@@ -10,7 +10,7 @@ dotenv.config();
 passport.use(new GoogleStrategy({
     clientID: process.env.CLIENT_ID,
     clientSecret: process.env.CLIENT_SECRET,
-    callbackURL: "http://localhost:3000/sesion/auth/google/create"
+    callbackURL: "http://localhost:3000/api/auth/google/create"
 }, async (accessToken, refreshToken, profile, done) => {
     try {
         const [rows] = await pool.query('SELECT HEX(id) AS id, google_id, name, email, profile_picture, rol FROM usuarios WHERE google_id = ?', [profile.id])

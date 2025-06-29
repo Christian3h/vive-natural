@@ -1,17 +1,21 @@
 doctype html
-html(lang="en")
+html(lang="es")
     head
         meta(charset="UTF-8")
         meta(name="viewport", content="width=device-width, initial-scale=1.0")
         title categoria 
+        link(rel="stylesheet", href="/css/main/dashboard.css")
     body 
-        form(action="/api/categoria/crearSubCategoria" method="POST")
-            label categoria:
-                select(name="categoria", id="categoria")
-                    option(value="") Selecciona una categoría
-                    each categoria in categorias
-                        option(value=`${categoria.id}`) #{categoria.nombre}
+        include ../../partials/menuAdmin.pug
+        main  
+            article 
+                form(action="/api/categoria/crearSubCategoria" method="POST")
+                    label categoria:
+                        select(name="categoria", id="categoria")
+                            option(value="") Selecciona una categoría
+                            each categoria in categorias
+                                option(value=`${categoria.id}`) #{categoria.nombre}
 
-            label sub categoria Nombre 
-                input(type="text" name ="subCategoria" required ) 
-            button(type="submit") Crear categoria
+                    label sub categoria Nombre 
+                        input(type="text" name ="subCategoria" required ) 
+                    button(type="submit") Crear categoria
