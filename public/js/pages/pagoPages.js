@@ -1,7 +1,9 @@
-import { consultarCarritoFechtch } from "../fetch/api.js";
+import { consultarCarritoFechtch } from "../fetch/index.js";
+import {initSlider} from "../components/cart/sliderCart.js"
+import { fetchFormularioPago } from '../fetch/pages/pagoPagesFetch.js';
 
 (async function main() {
-
+  initSlider();
   // Cierra otros tooltips si se abre uno nuevo
   function toggleTooltip(el) {
     document.querySelectorAll('.tooltip-container').forEach(t => {
@@ -45,21 +47,13 @@ import { consultarCarritoFechtch } from "../fetch/api.js";
   });
 
 
-  fetch('/sesion/formularioPago', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ total: total, carrito: carrito }),
-    credentials: 'include'
-  })
-    .then(res => res.text()) // o .json()
-    .then(data => {
-      console.log("Respuesta:", data);
-      const contenedor = document.querySelector(".acciones"); // el lugar donde lo insertas
-      contenedor.insertAdjacentHTML("beforeend", data);
-    })
-    .catch(error => {
-      console.error("Error al enviar formulario:", error);
-    });
+  const data = await fetchFormularioPago(total, carrito);
+  if (data) {
+    const contenedorAcciones = document.querySelector(".acciones");
+    contenedorAcciones.insertAdjacentHTML("beforeend", data);
+  } else {
+    console.error("No se pudo cargar el formulario de pago.");
+  }
 
 
   // Muestra el total

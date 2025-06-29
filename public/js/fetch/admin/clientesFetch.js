@@ -1,7 +1,6 @@
-
 export async function obtenerClientesPendientes() {
     try {
-        const response = await fetch('/sesion/admin/clientes/pendientes', {
+        const response = await fetch('/api/admin/clients/pending', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include'
@@ -16,7 +15,7 @@ export async function obtenerClientesPendientes() {
 
 export async function obtenerClientes(accion){
     try {
-        const response = await fetch('/sesion/admin/clientes/consulta', {
+        const response = await fetch('/api/admin/clients/query', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include',
@@ -34,7 +33,7 @@ export async function obtenerClientes(accion){
 
 export async function actualizarEstadoCliente(id, accion) {
     try {
-        const response = await fetch('/sesion/admin/clientes/estado-modificar', {
+        const response = await fetch('/api/admin/clients/status-modify', {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',

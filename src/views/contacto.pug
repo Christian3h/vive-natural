@@ -3,7 +3,43 @@ html(lang="es")
     head
         meta(charset="UTF-8")
         meta(name="viewport", content="width=device-width, initial-scale=1.0")
-        title Vive natural
+        title Vive natural - Contacto
         link(rel="stylesheet", href="css/main/contacto.css")
     body 
         include partials/nav.pug
+        main.contacto-container
+            div.contacto-titulo
+                h1 Contáctanos
+                p Estamos aquí para ayudarte
+
+            div.contacto-grid
+                div.contacto-info
+                    h2 Información de Contacto
+                    div.info-item
+                        img(src="img/svg/location.svg", alt="Ubicación")
+                        p Calle 123 #45-67, Bogotá, Colombia
+                    
+                    div.info-item
+                        img(src="img/svg/phone.svg", alt="Teléfono")
+                        p +57 301 234 5678
+                    
+                    div.info-item
+                        img(src="img/svg/mail.svg", alt="Email")
+                        p contacto@vivenatural.com
+                    
+                    div.info-item
+                        img(src="img/svg/calendar.svg", alt="Horario")
+                        p Lunes a Viernes: 8:00 AM - 6:00 PM
+
+                div.whatsapp-section
+                    h2 Contáctanos por WhatsApp
+                    p Respuesta inmediata a través de nuestro WhatsApp
+                    div.whatsapp-button
+                        a(href="https://wa.me/573012345678" target="_blank")
+                            img(src="img/svg/whatsapp.svg", alt="WhatsApp")
+                            span Chatear por WhatsApp
+                        p.whatsapp-info Horario de atención en WhatsApp:
+                        p.whatsapp-horario Lunes a Viernes: 8:00 AM - 6:00 PM
+                        p.whatsapp-horario Sábados: 9:00 AM - 2:00 PM
+
+        include partials/footer.pug

@@ -3,9 +3,11 @@ html(lang="es")
   head
     meta(charset="UTF-8")
     meta(name="viewport", content="width=device-width, initial-scale=1.0")
-    title Resumen de Pago
+    title Resumen de Pago | Vive Natural
+    link(rel="stylesheet", href="/css/main/pago.css")
     
   body 
+    include ./partials/nav
     main
       h1 Resumen de tu Pedido
       
@@ -13,11 +15,11 @@ html(lang="es")
 
       section#resumen
         h2 Total
-        p#total $0
+          p#total $0
         
         .acciones
           a.btn(href="/carrito") Editar Carrito
-          button.btn#continuarPago Pago especial
+          button.btn#continuarPago pago con aprobación previa
           
 
         // Modal de método de pago
@@ -35,21 +37,18 @@ html(lang="es")
 
                     // Campos adicionales si elige cuotas
                     div#opcionesCuotas(class="oculto")
-                        label(for="cuotasSelect")
-                        | Número de cuotas:
+                        label(for="cuotasSelect") Número de cuotas:
                         select#cuotasSelect(name="cuotas")
                         // Las opciones se insertan con JS
 
-                        p
-                        | Valor por cuota: 
-                        span#valorCuota $0
+                        p Valor por cuota: 
+                            span#valorCuota $0
 
-                        label(for="fechaLimite")
-                            | Fecha límite de pago por mes:
-                            div(class="tooltip-container" tabindex="0" )
-                              span(class="tooltip-icon") ❓
-                              div(class="tooltip-text")
-                                p La fecha límite indica el día máximo de cada mes en el que debes pagar tu cuota. No puedes pasarte de esa fecha. El año mostrado es solo referencial y no influye en los pagos.
+                        label(for="fechaLimite") Fecha límite de pago por mes:
+                            div(class="tooltip-container" tabindex="0")
+                                span(class="tooltip-icon") ❓
+                                div(class="tooltip-text")
+                                    p La fecha límite indica el día máximo de cada mes en el que debes pagar tu cuota. No puedes pasarte de esa fecha. El año mostrado es solo referencial y no influye en los pagos.
                             
                             input(type="date", name="fecha_limite", id="fechaLimite")
 
@@ -58,140 +57,8 @@ html(lang="es")
                         button.btn#cancelarModal(type="button") Cancelar
 
 
-               
+        include ./partials/footer
+        script(type="module", src="/js/pages/pagoPages.js")
 
 
-    script(type="module", src="/js/pages/pagoPages.js")
-
-    style. 
-        body {
-        font-family: sans-serif;
-        padding: 20px;
-        background: #f7f7f7;
-        }
-
-        h1, h2 {
-        text-align: center;
-        }
-
-        .producto {
-        display: flex;
-        background: #fff;
-        margin: 10px 0;
-        padding: 10px;
-        border-radius: 8px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-
-        .producto__imagen {
-        width: 120px;
-        height: auto;
-        border-radius: 8px;
-        margin-right: 15px;
-        }
-
-        .producto__info p {
-        margin: 4px 0;
-        }
-
-        #resumen {
-        margin-top: 30px;
-        background: #fff;
-        padding: 20px;
-        text-align: center;
-        border-radius: 8px;
-        }
-
-        .acciones {
-        display: flex;
-        justify-content: space-around;
-        margin-top: 20px;
-        }
-
-        .btn {
-        padding: 10px 20px;
-        background-color: #00a86b;
-        color: white;
-        text-decoration: none;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        font-size: 1rem;
-        transition: background 0.3s ease;
-        }
-
-        .btn:hover {
-        background-color: #007f55;
-        }
-
-        .modal {
-        position: fixed;
-        top: 0; left: 0;
-        width: 100vw; height: 100vh;
-        background: rgba(0,0,0,0.6);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 100;
-        }
-
-        .modal__contenido {
-        background: white;
-        padding: 20px 30px;
-        border-radius: 10px;
-        width: 300px;
-        text-align: center;
-        }
-
-        .modal label {
-        display: block;
-        margin: 10px 0;
-        font-weight: bold;
-        }
-
-        .oculto {
-        display: none;
-        }
-         .tooltip-container {
-          position: relative;
-          display: inline-block;
-          cursor: pointer;
-        }
-
-        .tooltip-text {
-          visibility: hidden;
-          background-color: #333;
-          color: #fff;
-          text-align: left;
-          padding: 8px;
-          border-radius: 8px;
-          position: absolute;
-          z-index: 1;
-          width: 200px;
-          bottom: 125%; /* arriba del icono */
-          left: 50%;
-          transform: translateX(-50%);
-          opacity: 0;
-          transition: opacity 0.3s ease;
-        }
-
-        .tooltip-container:hover .tooltip-text,
-        .tooltip-container:focus-within .tooltip-text,
-        .tooltip-container.show .tooltip-text {
-          visibility: visible;
-          opacity: 1;
-        }
-
-        .tooltip-icon {
-          background: #eee;
-          border-radius: 50%;
-          padding: 4px 8px;
-          font-weight: bold;
-          font-size: 14px;
-          user-select: none;
-        }
-
-    //esto es un comentario
-
-
-
+  

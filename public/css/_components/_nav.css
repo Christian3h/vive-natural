@@ -71,8 +71,8 @@ nav a {
 }
 
 nav img {
-    width: 50px;
-    height: 50px;
+    width: var(--icono-grande);
+    height: var(--icono-grande);
     border-radius: 50%;
     object-fit: cover;
 }
@@ -139,6 +139,7 @@ nav .reponsive button{
 
     header{
         height: 11dvh;
+        min-height: 100px;
     }
 
     nav {

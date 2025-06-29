@@ -19,6 +19,9 @@ export function crearProductoCard(producto, display, contador) {
         <div class="text-container">
             <h3>${producto.producto_nombre}</h3>
             <p>${producto.producto_descripcion}</p>
+            <div class="producto-descripcion-larga">
+                ${producto.producto_descripcion_larga ? (producto.producto_descripcion_larga) : ''}
+            </div>
             <p>Categoria: ${producto.categoria_nombre}</p>
             <p>Precio: ${formatoCOP.format(producto.precio_activo)}</p>
             <p id="stockProducto">Stock: ${producto.producto_stock}</p>

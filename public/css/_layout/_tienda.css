@@ -1,9 +1,14 @@
-main{
+.content-and-footer-wrapper {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
+    min-height: 100dvh; 
+}
+
+main {
+    max-width: 1200px; /* Mantener si el main tiene un ancho máximo general */
+    margin: 0 auto; /* Centrar el main */
+    padding: 2rem; /* Mantener padding general */
+    flex-grow: 1; /* Permitir que el main se expanda y empuje el footer */
 }
 
 #tienda h1{
@@ -15,7 +20,7 @@ main{
 #productosContainer h1{
     font-size: var(--letra-titulo);
     text-align: center;
-    color: var(--verde-oliva);
+    color: var(--verde-oscuro-principal); /* Nuevo color para el texto */
     grid-column: 1/4;
     margin: 50px auto;
 }

@@ -18,6 +18,9 @@ html(lang="es")
                         placeholder="Buscar cliente por nombre..."
                         class="search-input"
                     )
+                button#btn-crear-temporal.btn Crear usuario temporal
+                p.texto-explicativo
+                    | Puedes crear un usuario temporal para registrar compras de clientes que no tienen cuenta. Solo se requiere nombre y número.
 
                 #clientes-container
                     h2 Clientes con Deuda
@@ -52,6 +55,20 @@ html(lang="es")
                                     option(value="transferencia") Transferencia
                             
                             button(type="submit") Agregar Pago
+
+                // Modal para crear usuario temporal
+                #modalCrearTemporal.modal(style="display: none;")
+                    .modal-content
+                        span#closeModalTemporal.close &times;
+                        h2 Crear Usuario Temporal
+                        form#formCrearTemporal
+                            .form-group
+                                label(for="nombreTemporal") Nombre
+                                input(type="text" id="nombreTemporal" name="nombreTemporal" required)
+                            .form-group
+                                label(for="numeroTemporal") Número
+                                input(type="text" id="numeroTemporal" name="numeroTemporal" required)
+                            button(type="submit") Crear Usuario Temporal
 
             style. 
                

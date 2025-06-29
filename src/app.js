@@ -49,13 +49,13 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 // rutas 
-import usuarioRoutes from './routes/usuarioRoutes.js'
-import sesionRoutes from './routes/sesionRoutes.js'
-import apiRoutes from './routes/api/api.js'
+import api from './routes/api/api.js'
 
-app.use('/', usuarioRoutes)
-app.use('/sesion', sesionRoutes)
-app.use('/api', apiRoutes)
+app.use('/api', api)
+
+import views from './routes/views/index.js'
+
+app.use('/', views)
 
 // Iniciar servidor
 app.listen(port, () => {

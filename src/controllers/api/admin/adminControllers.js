@@ -15,6 +15,14 @@ export async function productosInicioControllers(req, res) {
     
 }
 
+export async function crearProductoAdminControllers(req, res) {
+    const { categorias, subcategorias } = await categoriaSubCategoria();
+    res.render('admin/productos/productosCrear', {
+        usuario: req.user,
+        categorias,
+        subcategorias
+    });
+}
 
 // export async function dashboardAdminControllers(req, res) {
 //     res.render('admin/dashboard', { 

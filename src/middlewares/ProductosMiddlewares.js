@@ -1,5 +1,6 @@
 import multer from 'multer' 
 import path from 'path'
+import crypto from 'crypto'
 
 
 // Configuración de multer para el almacenamiento de archivos
@@ -8,9 +9,9 @@ const storage = multer.diskStorage({
         cb(null, path.join(process.cwd(), 'public/uploads/productos'))
     },
     filename: function (req, file, cb) {
-        // Generar un nombre temporal, luego se renombrará con el ID del producto
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-        cb(null, uniqueSuffix + path.extname(file.originalname))
+        // Generar un nombre único usando UUID y mantener la extensión original
+        const uniqueFilename = crypto.randomUUID() + path.extname(file.originalname);
+        cb(null, uniqueFilename);
     }
 })
 
@@ -45,7 +46,7 @@ const uploadMiddleware = multer({
         }
         cb(null, true)
     }
-}).array('imagenes', 5)
+}).array('imagenes', 10)
 
 
 // Middleware para manejar la subida de archivos de la creacion de productos
@@ -56,6 +57,11 @@ const handleUpload = (req, res, next) => {
                 return res.status(400).json({ 
                     error: 'Campo de archivo incorrecto',
                     detalles: 'Usa "imagenes" como nombre del campo en form-data'
+                })
+            } else if (err.code === 'LIMIT_FILE_COUNT') {
+                return res.status(400).json({ 
+                    error: 'Límite de archivos excedido',
+                    detalles: 'Solo puedes subir hasta 10 imágenes por producto.'
                 })
             }
             return res.status(400).json({ 

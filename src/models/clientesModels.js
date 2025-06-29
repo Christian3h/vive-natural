@@ -65,6 +65,7 @@ export async function obtenerClientesConPagosClientesModels() {
             p.precio,
             u.name,
             u.profile_picture,
+            u.es_temporal,
             pa.id_pago,
             pa.monto AS monto_pago,
             pa.estado AS estado_pago,
@@ -77,15 +78,12 @@ export async function obtenerClientesConPagosClientesModels() {
             ab.fecha_abono
         FROM pedidos p
         JOIN seguimiento_pedidos sp ON p.id_pedido = sp.id_pedido
-        JOIN envios e ON p.id_envio = e.id_envio
-        JOIN usuarios u ON e.id_usuario = u.id
+        JOIN usuarios u ON p.id_usuario = u.id
         LEFT JOIN pagos pa ON pa.id_pedido = p.id_pedido
         LEFT JOIN pagos_abono ab ON ab.id_pago = pa.id_pago
-        WHERE p.estado = 'aprobado'
-          AND sp.estado = 'pendiente'
+        WHERE p.estado = 'aprobado' OR (p.estado = 'pendiente' AND u.es_temporal = 1)
         ORDER BY p.id_pedido, pa.id_pago, ab.fecha_abono ASC
     `);
-
     return rows;
 }
 

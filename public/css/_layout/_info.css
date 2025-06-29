@@ -1,0 +1,209 @@
+.info-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.info-titulo {
+    text-align: center;
+    margin-bottom: 4rem;
+    color: var(--verde-oscuro-principal);
+}
+
+.info-titulo h1 {
+    font-size: var(--letra-titulo);
+    margin-bottom: 1rem;
+}
+
+.info-titulo p {
+    font-size: var(--letra-subtitulo);
+}
+
+.info-section {
+    margin-bottom: 4rem;
+    padding: 2rem;
+    background-color: var(--blanco-roto);
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.info-section h2 {
+    color: var(--verde-oscuro-principal);
+    font-size: var(--letra-subtitulo);
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.info-section p {
+    line-height: 1.6;
+    font-size: var(--letra-texto-un-poquito);
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.info-card {
+    background-color: var(--beige-claro);
+    padding: 2rem;
+    border-radius: 10px;
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.info-card:hover {
+    transform: translateY(-5px);
+}
+
+.info-card img {
+    width: var(--icono-mediano);
+    height: var(--icono-mediano);
+    margin-bottom: 1rem;
+    filter: invert(19%) sepia(23%) saturate(987%) hue-rotate(118deg) brightness(92%) contrast(89%);
+}
+
+.info-card h3 {
+    color: var(--verde-oscuro-principal);
+    margin-bottom: 1rem;
+    font-size: var(--letra-texto-un-poquito);
+}
+
+.info-card p {
+    color: var(--verde-oliva);
+    font-size: var(--letra-texto);
+}
+
+.redirect-section {
+    background-color: var(--verde-oliva);
+    color: var(--blanco-roto);
+}
+
+.redirect-section h2 {
+    color: var(--blanco-roto);
+}
+
+.redirect-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+}
+
+.redirect-card {
+    background-color: rgba(250, 247, 242, 0.1);
+    padding: 2rem;
+    border-radius: 10px;
+    text-align: center;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.redirect-card:hover {
+    background-color: rgba(250, 247, 242, 0.2);
+    transform: translateY(-5px);
+}
+
+.redirect-card img {
+    width: var(--icono-mediano);
+    height: var(--icono-mediano);
+    margin-bottom: 1rem;
+    filter: brightness(0) invert(1);
+}
+
+.redirect-card h3 {
+    color: var(--blanco-roto);
+    margin-bottom: 1rem;
+    font-size: var(--letra-texto-un-poquito);
+}
+
+.redirect-card p {
+    color: var(--beige-claro);
+    font-size: var(--letra-texto);
+}
+
+/* Estilos para la sección de PQR */
+.info-section#metodo-pago-preaprobacion details {
+    margin-bottom: 1rem;
+    background-color: var(--beige-claro);
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    padding: 1.5rem 2rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.info-section#metodo-pago-preaprobacion details:hover {
+    background-color: var(--beige-medio);
+}
+
+.info-section#metodo-pago-preaprobacion summary {
+    font-size: var(--letra-texto-un-poquito);
+    color: var(--verde-oscuro-principal);
+    font-weight: bold;
+    padding: 0;
+    outline: none;
+    position: relative;
+    list-style: none; /* Eliminar el marcador predeterminado */
+}
+
+.info-section#metodo-pago-preaprobacion summary::marker,
+.info-section#metodo-pago-preaprobacion summary::-webkit-details-marker {
+    display: none;
+}
+
+.info-section#metodo-pago-preaprobacion summary::after {
+    content: '+';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.5rem;
+    color: var(--verde-oliva);
+    transition: transform 0.3s ease;
+}
+
+.info-section#metodo-pago-preaprobacion details[open] summary::after {
+    content: '-';
+    transform: translateY(-50%) rotate(0deg);
+}
+
+.info-section#metodo-pago-preaprobacion details p,
+.info-section#metodo-pago-preaprobacion details ul {
+    color: var(--verde-oliva);
+    font-size: var(--letra-texto);
+    line-height: 1.6;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--beige-claro-border);
+}
+
+.info-section#metodo-pago-preaprobacion details ul {
+    list-style: disc inside;
+    margin-left: 1.5rem;
+}
+
+.info-section#metodo-pago-preaprobacion details li {
+    margin-bottom: 0.5rem;
+}
+
+@media (max-width: 768px) {
+    .info-container {
+        padding: 1rem;
+    }
+    
+    .info-section {
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .info-grid,
+    .redirect-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .info-titulo {
+        margin-bottom: 2rem;
+    }
+} 

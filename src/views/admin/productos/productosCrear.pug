@@ -17,6 +17,14 @@ html(lang="es")
                     label(for="descripcion") Descripcion del producto
                     textarea( required type="text", name="descripcion", id="descripcion" placeholder="Descripcion del producto")
 
+                    label(for="descripcionLarga") Descripción larga del producto (Markdown)
+                    textarea(
+                        name="descripcionLarga" 
+                        id="descripcionLarga" 
+                        placeholder="## Título\n- Punto 1\n- Punto 2"
+                        rows="12"
+                    )
+
                     label(for="precio") Precio del producto
                     input( required type="number", name="precio", placeholder="Precio del producto")
 

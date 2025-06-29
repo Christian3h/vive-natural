@@ -6,28 +6,38 @@ header#header-main
         #menu-lateral
             ul
                 li
-                    a(href="/sesion/admin/" data-seccion="finanzas") Finanzas
-                        
+                    a(href="/api/admin/" data-seccion="finanzas")
+                        img(src="/img/icon/bar-chart.svg", alt="Icono de finanzas")
+                        | Finanzas
+                        //modificar rutas 
                 li
-                    a(href="#" data-seccion="productos" class="has-submenu") Productos
+                    a(href="#" data-seccion="productos" class="has-submenu")
+                        img(src="/img/icon/package.svg", alt="Icono de productos")
+                        | Productos
                     ul.submenu
-                        li: a(href="/sesion/admin/producto/crear") Crear producto
-                        li: a(href="/sesion/admin/categoria/crear") Crear categoría
-                        li: a(href="/sesion/admin/categoria/sub") Crear Subcategoría
-                        li: a(href="/sesion/admin/productos/") Lista de productos
+                        li: a(href="/api/admin/products/create-form") Crear producto
+                        li: a(href="/api/admin/categories/create-form") Crear categoría
+                        li: a(href="/api/admin/subcategories/create-form") Crear Subcategoría
+                        li: a(href="/api/admin/products/overview") Lista de productos
                 li
-                    a(href="#" data-seccion="clientes") Clientes
+                    a(href="#" data-seccion="clientes")
+                        img(src="/img/icon/users.svg", alt="Icono de clientes")
+                        | Clientes
                     ul.submenu
-                        li: a(href="/sesion/admin/clientes/pagos") Agregar pagos 
-                        li: a(href="/sesion/admin/clientes/pendientes") Clientes pendientes
-                        li: a(href="/sesion/admin/clientes/") Administrar clientes 
+                        li: a(href="/api/admin/clients/payments") Agregar pagos 
+                        li: a(href="/api/admin/clients/pending") Clientes pendientes
+                        li: a(href="/api/admin/clients/query") Administrar clientes 
                 li
-                    a(href="#" data-seccion="pedidos") Pedidos
+                    a(href="#" data-seccion="pedidos")
+                        img(src="/img/icon/truck.svg", alt="Icono de pedidos")
+                        | Pedidos
                     ul.submenu
-                        li: a(href="/sesion/admin/pedidos") Pedidos pendientes
-                        li: a(href="/sesion/admin/pedidos/envios") Pedidos poer entregar
+                        li: a(href="/admin/orders/") Pedidos pendientes
+                        li: a(href="/admin/orders/pending-shipments") Pedidos por entregar
         #menu-user
             a(href="/perfil")
                 img(src= `${usuario.profile_picture}` class="perfil-img" alt="Foto de perfil")
-            a(href="/sesion/logout") Cerrar sesión
+            a(href="/api/auth/auth/logout")
+                img(src="/img/icon/log-out.svg", alt="Icono de cerrar sesión")
+                | Cerrar sesión
 script(type="module", src="/js/pages/admin/responsiveDashboard.js") 

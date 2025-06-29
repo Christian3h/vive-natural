@@ -11,12 +11,64 @@ html(lang="es")
             article.inicio
                 h1 Vive Natural
                 p Tu mejor versión comienza hoy
-            article.info#informacion
-                h2.titulo Texto de informaicon 
-                p.texto Lorem ipsum dolor sit amet consectetur, adipisicing elit. Officiis explicabo, molestiae impedit quod ipsa laudantium eaque autem esse molestias aliquam corporis debitis inventore ut illum suscipit expedita eveniet numquam praesentium.
-            article.productos
-                h2.titulo productos
+                a(href="/tienda") Descubre nuestros productos
+
+            article.beneficios
+                h2.titulo Beneficios de lo Natural
+                div.beneficios-grid
+                    div.beneficio-card
+                        img(src="img/icon/heart.svg", alt="Salud")
+                        h3 Mejor Salud
+                        p Productos 100% naturales que cuidan tu bienestar
+                        button.boton-funcion(onclick="window.location.href='/productos/categoria/salud'") Ver productos de salud
+
+                    div.beneficio-card
+                        img(src="img/icon/zap.svg", alt="Energía")
+                        h3 Más Energía
+                        p Potencia tu día con ingredientes naturales
+                        button.boton-funcion(onclick="window.location.href='/productos/categoria/energia'") Ver energizantes naturales
+
+                    div.beneficio-card
+                        img(src="img/icon/cloud.svg", alt="Ambiente")
+                        h3 Eco-friendly
+                        p Comprometidos con el medio ambiente
+                        button.boton-funcion(onclick="window.location.href='/productos/categoria/eco'") Ver productos eco
+
+            article.productos-destacados
+                h2.titulo Productos Destacados
                 div#productosContainer
+
+            article.consejos
+                h2.titulo Tips Saludables
+                div.consejos-grid
+                    div.consejo-card
+                        img(src="img/icon/droplet.svg", alt="Icono de alimentación")
+                        h3 Alimentación Consciente
+                        p Mejora tu alimentación con nuestros productos naturales
+                        button.boton-funcion(onclick="window.location.href='/productos/categoria/alimentacion'") Ver productos
+
+                    div.consejo-card
+                        img(src="img/icon/activity.svg", alt="Icono de actividad")
+                        h3 Rutina Natural
+                        p Complementa tu rutina con productos orgánicos
+                        button.boton-funcion(onclick="window.location.href='/productos/categoria/suplementos'") Ver suplementos
+
+                    div.consejo-card
+                        img(src="img/icon/award.svg", alt="Icono de bienestar")
+                        h3 Bienestar Holístico
+                        p Productos que equilibran cuerpo y mente
+                        button.boton-funcion(onclick="window.location.href='/productos/categoria/bienestar'") Ver más
+
+            article.compromiso
+                h2.titulo Nuestro Compromiso
+                div.compromiso-content
+                    div.compromiso-texto
+                        p En Vive Natural, nos dedicamos a brindarte productos de la más alta calidad, seleccionados cuidadosamente para tu bienestar.
+                        p Trabajamos con productores locales comprometidos con prácticas sostenibles.
+                    div.compromiso-acciones
+                        button.boton-funcion(onclick="window.location.href='/info'") Conoce nuestra historia
+                        button.boton-funcion(onclick="window.location.href='https://wa.me/tucelu'") Contáctanos por WhatsApp
+
         include ./partials/footer
         
         script(src="../js/pages/indexPages.js" type="module" defer)

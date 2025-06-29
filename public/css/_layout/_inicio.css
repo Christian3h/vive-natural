@@ -18,6 +18,7 @@ article{
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
+    position: relative;
 }
 
 .inicio::before {
@@ -31,6 +32,18 @@ article{
 .inicio > * {
     position: relative;
     z-index: 3; /* Para que el contenido esté encima del filtro */
+}
+
+.inicio a {
+    text-decoration: none;
+    color: var(--blanco-roto);
+    font-size: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.inicio a:hover{
+    scale: 1.1;
+    color: var(--dorado-suave);
 }
 
 .info{
@@ -102,6 +115,264 @@ article h1{
         height: 89dvh;
     }
 
+
+
+} 
+
+/* Hero Section */
+.hero {
+    min-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), url('/img/hero-bg.jpg');
+    background-size: cover;
+    background-position: center;
+    padding: 2rem;
+}
+
+.hero h1 {
+    font-size: 3.5rem;
+    color: var(--color-primario);
+    margin-bottom: 1rem;
+}
+
+.hero-texto {
+    font-size: 1.5rem;
+    color: var(--color-texto);
+    margin-bottom: 2rem;
+}
+
+.cta-button {
+    background-color: var(--color-primario);
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 50px;
+    text-decoration: none;
+    font-size: 1.2rem;
+    transition: transform 0.3s ease, background-color 0.3s;
+}
+
+.cta-button:hover {
+    transform: translateY(-3px);
+    background-color: var(--color-secundario);
+}
+
+/* Beneficios Section */
+.beneficios {
+    margin-top: 2rem;
+    background-color: var(--color-fondo-claro);
+    width: 100%;
+}
+
+.beneficios-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 2rem auto;
+    width: 90%;
+}
+
+.beneficio-card {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 10px;
+    text-align: center;
+    transition: transform 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.beneficio-card:hover {
+    transform: translateY(-5px);
+}
+
+.beneficio-card img {
+    width: var(--icono-mediano);
+    height: var(--icono-mediano);
+    margin-bottom: 1rem;
+}
+
+.beneficio-card h3 {
+    color: var(--color-primario);
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+}
+
+.beneficio-card p {
+    color: var(--color-texto);
+    line-height: 1.6;
+}
+
+/* Productos Destacados */
+.productos-destacados {
+    margin-top: 2rem;
+    width: 100%;
+}
+
+/* Consejos Section */
+.consejos {
+    margin-top: 2rem;
+    background-color: var(--color-fondo-claro);
+    width: 100%;
+}
+
+.consejos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 2rem auto;
+    width: 90%;
+}
+
+.consejo-card {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.consejo-card img {
+    width: var(--icono-mediano);
+    height: var(--icono-mediano);
+    margin-bottom: 1rem;
+    /* filter: invert(19%) sepia(23%) saturate(987%) hue-rotate(118deg) brightness(92%) contrast(89%); */
+}
+
+.consejo-card h3 {
+    color: var(--verde-oscuro-principal);
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+}
+
+.consejo-card p {
+    color: var(--verde-oliva);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.leer-mas {
+    display: inline-block;
+    color: var(--color-primario);
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+.leer-mas:hover {
+    color: var(--color-secundario);
+}
+
+/* Compromiso Section */
+.compromiso {
+    margin: 2rem 0 2rem 0; /* Restaurar margen vertical original */
+    text-align: center;
+    width: 80%;
+    max-width: 1150px;
+    border-radius: 10px;
+    background-color: white;
+    padding: 2rem 0 2rem 0;
+    margin: auto;
+    margin-top: 2rem;
+    margin-bottom: 4rem;
+}
+
+.compromiso-content {
+    max-width: 800px; /* Restaurar ancho original si era 800px */
+    margin: 0 auto;
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem; /* Espacio entre texto y acciones */
+}
+
+.compromiso-texto p {
+    margin-bottom: 1rem; /* Restaurar margen inferior original */
+    line-height: 1.6; /* Restaurar line-height original */
+    color: var(--color-texto); /* Usar variable de color general para texto */
+    font-size: var(--letra-texto); /* Usar variable de tamaño de letra general para texto */
+}
+
+.compromiso-acciones {
+    display: flex;
+    gap: 1rem; /* Restaurar gap original */
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* Títulos generales */
+.titulo {
+    text-align: center;
+    color: var(--color-primario);
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+}
+
+/* Responsive */
+@media (max-width: 850px) {
+    .hero h1 {
+        font-size: 2.5rem;
+    }
+
+    .hero-texto {
+        font-size: 1.2rem;
+    }
+
+    .newsletter-form {
+        flex-direction: column;
+    }
+
+    .compromiso-acciones {
+        flex-direction: column;
+    }
+
+    .action-button {
+        width: 100%;
+        text-align: center;
+    }
+
+    .beneficios-grid,
+    .consejos-grid,
+    .compromiso-content {
+        width: 95%;
+    }
+
+    .titulo {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 500px) {
+    .hero h1 {
+        font-size: 2.5rem;
+    }
+
+    .hero-texto {
+        font-size: 1.2rem;
+    }
+
+    .compromiso-acciones {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .action-button {
+        display: block;
+        text-align: center;
+    }
+
+    .beneficio-card,
+    .consejo-card {
+        padding: 1.5rem;
+    }
+
+    .titulo {
+        font-size: 1.8rem;
+    }
 } 
     
     

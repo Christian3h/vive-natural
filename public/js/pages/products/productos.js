@@ -1,12 +1,10 @@
-import { obtenerProductos } from '../../fetch/api.js';
-import { formatoCOP } from '../../utils/formatoMoneda.js';
+import { obtenerProductos } from '../../fetch/products/productsFetch.js';
 import { crearProductoCard } from './insertarProductos.js';
 import { initSlider } from '../../components/cart/sliderCart.js';
 
 export async function insertarProductos(productos) {
     const productosContainer = document.getElementById('productosContainer');
     if (!productosContainer) return console.error("No se encontró el contenedor de productos.");
-
 
     if (!Array.isArray(productos) || productos.length === 0) {
         productosContainer.innerHTML = '<h1>No se encontraron productos.</h1>';

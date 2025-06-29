@@ -2,43 +2,29 @@ doctype html
 html(lang="es")
   head
     meta(charset="UTF-8")
-    title Datos de Envío
-    link(rel="stylesheet", href="/css/main/dashboard.css")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    title Datos de Envío | Vive Natural
+    link(rel="stylesheet", href="/css/main/datos-envio.css")
   body
     main 
       article 
         h1 Ingresa tus datos de envío
 
         form(action="/procesar-envio", method="POST")
-          label(for="nombre") Nombre Completo
-          input(type="text", id="nombre", name="nombre", required)
+          div.form-group
+            label(for="nombre") Nombre Completo
+            input(type="text", id="nombre", name="nombre", required)
 
-          label(for="numero") Número de Teléfono
-          input(type="tel", id="numero", name="numero", required)
+          div.form-group
+            label(for="numero") Número de Teléfono
+            input(type="tel", id="numero", name="numero", required)
 
-          label(for="ciudad") Ciudad
-          input(type="text", id="ciudad", name="ciudad", required)
+          div.form-group
+            label(for="ciudad") Ciudad
+            input(type="text", id="ciudad", name="ciudad", required)
 
-          label(for="direccion") Dirección
-          input(type="text", id="direccion", name="direccion", required)
+          div.form-group
+            label(for="direccion") Dirección
+            input(type="text", id="direccion", name="direccion", required)
 
           button(type="submit") Guardar Datos de Envío
-
-  style. 
-    main{
-      width: 100dvw;
-      height : 100dvh
-    }
-
-    article{
-      align-items: center;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-    }
-
-    form{
-      width: 90%;
-      max-width: 800px;
-      align-items: center;    
-      } 

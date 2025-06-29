@@ -1,6 +1,4 @@
 .iconos-sesion {
-    position: absolute;
-    right: 30px;
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
@@ -12,7 +10,8 @@
 background-color: #EDE9E3;  /* Fondo claro */
 padding: 20px;
 border-radius: 10px;
-max-width: 800px;
+width: 80dvw;
+max-width: 80%;
 margin: auto;
 }
 

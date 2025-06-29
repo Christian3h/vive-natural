@@ -11,7 +11,7 @@
 /* archivo para el fondo el color de fondo para todo el archivo */
 @import "../_layout/_fondo.css";
 
-/* archivo para los inicio */
-@import "../_layout/_inicio.css";
+/* archivo para el perfil */
+@import "../_layout/_perfil.css";
 
 @import "../_components/_pedidosLista.css"

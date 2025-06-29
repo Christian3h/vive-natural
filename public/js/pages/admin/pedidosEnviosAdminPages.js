@@ -1,21 +1,9 @@
+import { fetchPedidosEnviosPendientes, marcarPedidoEnvio } from '../../fetch/pages/admin/pedidosEnviosAdminFetch.js';
+
 async function obtenerPedidosPendientes() {
     try {
-        const response = await fetch('/sesion/admin/pedidos/pendientes/envios', {
-            headers: {
-                'Authorization': 'Bearer ' + (localStorage.getItem('authToken') || '')
-            }
-        });
+        const data = await fetchPedidosEnviosPendientes();
 
-        
-
-        // Verificar si la respuesta es exitosa
-        if (!response.ok) {
-            throw new Error(`Error HTTP: ${response.status}`);
-        }
-
-        const data = await response.json();
-
-        // Verificar si hay datos y procesarlos
         if (data && data.length > 0) {
             renderPedidosPendientes(data);
         } else {
@@ -23,7 +11,7 @@ async function obtenerPedidosPendientes() {
         }
         return data;
     } catch (error) {
-        c
+        console.error('Error en obtenerPedidosPendientes:', error);
         renderError('No se pudieron cargar los pedidos pendientes. Por favor intenta nuevamente.');
     }
 }
@@ -46,37 +34,31 @@ function renderPedidosPendientes(pedidos) {
     container.innerHTML = '';  // Limpiar contenedor
 
     pedidos.forEach(pedido => {
-        // Agrupar productos por nombre y sumar las cantidades
         const productosAgrupados = {};
-        const nombresProductos = pedido.productos.split(', '); // Convertir la lista de productos en un arreglo
-        const detallesProductos = pedido.detalles_productos.split(' | '); // Convertir los detalles del producto en un arreglo
-        const precios = pedido.precios.split(', '); // Convertir los precios en un arreglo
+        const nombresProductos = pedido.productos.split(', ');
+        const detallesProductos = pedido.detalles_productos.split(' | ');
+        const precios = pedido.precios.split(', ');
 
-        // Recorremos los detalles de los productos y agrupamos por nombre
         nombresProductos.forEach((producto, index) => {
-            // Extraer la cantidad del detalle del producto
-            const cantidadStr = detallesProductos[index].split(', ')[1]; // "Cantidad: X"
-            const cantidad = parseInt(cantidadStr.split(': ')[1]); // Extraemos el número de la cantidad
+            const cantidadStr = detallesProductos[index].split(', ')[1];
+            const cantidad = parseInt(cantidadStr.split(': ')[1]);
 
-            // Verificar si la cantidad es un número válido
             if (isNaN(cantidad)) {
                 console.error(`Error: La cantidad para el producto "${producto}" no es válida.`);
-                return; // Saltar este producto si la cantidad no es válida
+                return;
             }
 
-            // Agrupar por producto y sumar la cantidad
             if (productosAgrupados[producto]) {
-                productosAgrupados[producto].cantidad += cantidad; // Sumar la cantidad
+                productosAgrupados[producto].cantidad += cantidad;
             } else {
                 productosAgrupados[producto] = {
                     cantidad: cantidad,
-                    precio: precios[index], // Guardamos el precio
-                    detalle: detallesProductos[index] // Guardamos el detalle para mostrar
+                    precio: precios[index],
+                    detalle: detallesProductos[index]
                 };
             }
         });
 
-        // Ahora podemos crear el HTML con los productos agrupados
         let productosHtml = '';
         Object.keys(productosAgrupados).forEach(producto => {
             const info = productosAgrupados[producto];
@@ -140,7 +122,6 @@ function renderPedidosPendientes(pedidos) {
             </div>
         `;
 
-        // Agregar evento a los botones después de insertarlos
         const btnEntregar = pedidoElement.querySelector('.btn-entregar');
         const btnCancelar = pedidoElement.querySelector('.btn-cancelar');
 
@@ -151,8 +132,6 @@ function renderPedidosPendientes(pedidos) {
     });
 }
 
-
-// Función para formatear la fecha
 function formatDate(dateString) {
     if (!dateString) return 'N/A';
     const options = {
@@ -171,25 +150,7 @@ async function marcarPedido(pedidoId, nuevoEstado) {
     }
 
     try {
-        const response = await fetch(`/sesion/admin/pedidos/${pedidoId}/estado/envios`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + (localStorage.getItem('authToken') || '')
-            },
-            body: JSON.stringify({
-                estado: nuevoEstado
-            })
-        });
-
-
-
-        if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.message || 'Error al actualizar el pedido');
-        }
-
-        const result = await response.json();
+        const result = await marcarPedidoEnvio(pedidoId, nuevoEstado); // Usar la nueva función
         alert(result.mensaje);
         location.reload();
     } catch (error) {
@@ -198,5 +159,4 @@ async function marcarPedido(pedidoId, nuevoEstado) {
     }
 }
 
-// Llamar a la función al cargar el documento
 obtenerPedidosPendientes();

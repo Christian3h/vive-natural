@@ -13,5 +13,10 @@
     --letra-subtitulo: 1.5rem;
     --letra-texto-un-poquito: 1.2rem;
     --letra-texto: 1rem;
+
+    /* tamaños para los iconos */
+    --icono-pequeno: 16px;
+    --icono-mediano: 24px;
+    --icono-grande: 40px;
 }
 

@@ -1,28 +1,15 @@
 import { formatoCOP } from '../utils/formatoMoneda.js';
-
+import { fetchPedidosUsuario } from '../fetch/pages/perfilFetch.js';
 
 document.addEventListener("DOMContentLoaded", async () => {
 
   try {
-    const res = await fetch("/sesion/admin/perfil", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      credentials: "include" // Para enviar cookies/sesión si aplica
-    });
+    const pedidos = await fetchPedidosUsuario();
 
-    if (!res.ok) {
-      throw new Error(`Error al obtener los pedidos: ${res.status}`);
+    if (!pedidos) {
+      document.getElementById("pedidos-ul").innerHTML = "<li>Error al cargar pedidos.</li>";
+      return;
     }
-
-    const contentType = res.headers.get("content-type");
-    console.log(contentType)
-    if (!contentType || !contentType.includes("application/json")) {
-      throw new Error("La respuesta no es JSON");
-    }
-
-    const pedidos = await res.json();
 
     const lista = document.getElementById("pedidos-ul");
 
@@ -30,14 +17,14 @@ document.addEventListener("DOMContentLoaded", async () => {
       lista.innerHTML = "<li>No tienes pedidos todavía.</li>";
       return;
     }
-    const idPedidos = new Set(); // solo necesitamos guardar los ID únicos
+    const idPedidos = new Set();
 
     pedidos.forEach(pedido => {
       if (idPedidos.has(pedido.id_pedido)) {
-        return; // ya se insertó este pedido
+        return;
       }
     
-      idPedidos.add(pedido.id_pedido); // registrar el ID
+      idPedidos.add(pedido.id_pedido);
     
       const item = document.createElement("li");
       item.innerHTML = `

@@ -28,74 +28,50 @@ const uploadDir = path.join(process.cwd(), 'public/uploads/productos');
 
 
 //crear producto 
-export async function crearProductoService({ nombre, descripcion, categoria, id_subcategoria, precio, stock, imagenes, costo}) {
+export async function crearProductoService({
+    nombre,
+    descripcion,
+    descripcion_larga, 
+    categoria,
+    id_subcategoria,
+    precio,
+    stock,
+    imagenes,
+    costo
+}) {
     if (!imagenes || imagenes.length === 0) {
         throw new Error('Debes subir al menos una imagen');
     }
+
     const id_producto = await generarIdProducto();
-    // Insertar datos en la BD
-    await insertarProducto(id_producto, nombre, descripcion, categoria, id_subcategoria, costo);
+
+    await insertarProducto(id_producto, nombre, descripcion, descripcion_larga, categoria, id_subcategoria, costo);
     await insertarPrecio(id_producto, precio);
     await insertarStock(id_producto, stock);
-    // Procesar imágenes
-    const imageValues = await procesarImagenes(imagenes, id_producto);
+
+    const imageValues = imagenes.map(file => [Buffer.from(id_producto, 'hex'), file.filename]);
     if (imageValues.length > 0) {
         await insertarImagenes(imageValues);
     }
-    return { 
-        message: 'Producto creado correctamente', 
+
+    return {
+        message: 'Producto creado correctamente',
         id_producto,
         nombre,
         precio,
         stock
     };
-};
+}
+
 
 // procesar imagenes 
 
 export async function procesarImagenes (imagenes, id_producto) {
     if (!imagenes || imagenes.length === 0) return [];
-    // Consultar imágenes existentes en la BD
-    const imagenesExistentes = await consultarImagenes(id_producto);
-    const formattedId = id_producto.replace(/-/g, '').toLowerCase();
-    // Obtener los números de imágenes ya usados para evitar conflictos
-    const numerosUsados = new Set(
-        imagenesExistentes.map(img => {
-            if (typeof img === "object" && img.ruta_imagen) {
-                const match = img.ruta_imagen.match(/_(\d+)\.webp$/);
-                return match ? parseInt(match[1]) : null;
-            }
-            return null;
-        }).filter(num => num !== null)
-    );
-    let newIndex = 0;
-    while (numerosUsados.has(newIndex)) {
-        newIndex++; // Buscar el próximo número disponible
-    }
-    const imageValues = await Promise.all(
-        imagenes.map(async (file) => {
-            // Asignar un número único para cada nueva imagen
-            while (numerosUsados.has(newIndex)) {
-                newIndex++;
-            }
-            numerosUsados.add(newIndex);
-            const newFileName = `${formattedId}_${newIndex}.webp`;
-            const newPath = path.join(uploadDir, newFileName);
-
-            try {
-                await fs.rename(file.path, newPath);
-                return [Buffer.from(formattedId, 'hex'), newFileName];
-            } catch (error) {
-                console.error('Error al mover imagen:', error);
-                try {
-                    await fs.unlink(file.path); // Eliminar archivo temporal en caso de error
-                } catch (unlinkError) {
-                    console.error('Error al eliminar archivo temporal:', unlinkError);
-                }
-                throw new Error('Error al procesar la imagen');
-            }
-        })
-    );
+    const imageValues = imagenes.map(file => [
+        Buffer.from(id_producto, 'hex'), 
+        file.filename // Usar el nombre de archivo generado por Multer (UUID)
+    ]);
     return imageValues;
 };
 
@@ -153,19 +129,23 @@ export async function  validarExistenciaDeProducto (id) {
 };
 
 // actualizar producto
-export async function  actualizarProductoService (id, { nombre, descripcion, categoria, id_subcategoria, precio, stock, imagenes, imagenes_delete }) {
-    
+export async function  actualizarProductoService (id, { nombre, descripcion, descripcion_larga, categoria, id_subcategoria, precio, stock, imagenes, imagenes_delete }) {
     try {
-        const validar = await validarExistenciaDeProducto(id);
+        const validar = await validarExistenciaDeProducto(id)
         if (!validar) {
             return { error: 'Producto no existe' };
         }
-        const [producto] = await listarProducto(id);
+        const [productoData] = await listarProducto(id);
+        // Ensure productoData is not undefined.
+        if (!productoData) {
+            throw new Error('No se pudo cargar la información del producto para la actualización.');
+        }
 
         // Validar existencia de subcategoría
-        if (id_subcategoria) {
-            const [subcategoria] = await consultarSubcategoria(id_subcategoria);
-            if (!subcategoria.length) {
+        let final_id_subcategoria = id_subcategoria === '' ? null : id_subcategoria;
+        if (final_id_subcategoria) { 
+            const [subcategoria_result] = await consultarSubcategoria(final_id_subcategoria);
+            if (!subcategoria_result || subcategoria_result.length === 0) {
                 return { error: 'La subcategoría especificada no existe' };
             }
         }
@@ -173,49 +153,82 @@ export async function  actualizarProductoService (id, { nombre, descripcion, cat
         let valores = [];
         let camposActualizar = [];
 
-        if (nombre && nombre !== producto.nombre) {
+        // Nombre
+        if (nombre !== undefined && String(nombre).trim() !== String(productoData.producto_nombre || '').trim()) {
             camposActualizar.push('nombre = ?');
-            valores.push(nombre);
-        }
-        if (descripcion && descripcion !== producto.descripcion) {
-            camposActualizar.push('descripcion = ?');
-            valores.push(descripcion);
-        }
-        if (categoria && categoria !== producto.id_categoria) {
-            camposActualizar.push('id_categoria = ?');
-            valores.push(categoria);
-        }
-        if (id_subcategoria && id_subcategoria !== producto.id_subcategoria) {
-            camposActualizar.push('id_subcategoria = ?');
-            valores.push(id_subcategoria);
+            valores.push(nombre.trim());
+            console.log('Actualizando nombre', nombre);
         }
 
-        // Actualizar campos del producto
-        if (camposActualizar.length > 0) {
-            await actualizarProducto(id, camposActualizar, valores);
+        // Descripcion
+        if (descripcion !== undefined && String(descripcion).trim() !== String(productoData.producto_descripcion || '').trim()) {
+            camposActualizar.push('descripcion = ?');
+            valores.push(descripcion.trim());
+            console.log('Actualizando descripcion', descripcion);
         }
-        // Manejo de precios
-        if (precio && precio !== producto.precio) {
+
+        // Descripcion Larga
+        if (descripcion_larga !== undefined && String(descripcion_larga).trim() !== String(productoData.producto_descripcion_larga || '').trim()) {
+            camposActualizar.push('descripcion_larga = ?');
+            valores.push(descripcion_larga.trim());
+        }
+
+        // Categoria
+        if (categoria !== undefined && String(categoria).trim() !== String(productoData.producto_categoria || '').trim()) {
+            camposActualizar.push('id_categoria = ?');
+            valores.push(categoria.trim() === '' ? null : categoria.trim()); 
+            console.log('Actualizando categoria', categoria);
+        }
+
+        // Subcategoria
+        if (id_subcategoria !== undefined && final_id_subcategoria !== (productoData.producto_subcategoria || null)) {
+            camposActualizar.push('id_subcategoria = ?');
+            valores.push(final_id_subcategoria);
+            console.log('Actualizando subcategoria', id_subcategoria);
+        }
+        
+        // Precio
+        if (precio !== undefined && parseFloat(precio) !== parseFloat(productoData.precio_activo || 0)) { 
+            console.log('Actualizando precio', precio);
             await desactivarPrecio(id);
             await crearPrecio(id, precio);
         }
-        // Manejo de stock
-        if (stock && stock !== producto.stock) {
-            
+        
+        // Stock
+        if (stock !== undefined && parseInt(stock) !== parseInt(productoData.producto_stock || 0)) { 
+            console.log('Actualizando stock', stock);
             await insertarStock(id, stock);
         }
+
+        // Actualizar campos del producto (texto)
+        console.log(camposActualizar)
+        if (camposActualizar.length > 0) {
+            console.log('Llamando a actualizarProducto con campos:', camposActualizar, 'y valores:', valores);
+            await actualizarProducto(id, camposActualizar, valores);
+            console.log('actualizarProducto completado.');
+        }
+        
         // Eliminar imágenes
         if (imagenes_delete && imagenes_delete.length > 0) {
+            console.log('Eliminando imágenes:', imagenes_delete);
             await elimiarImagenes(imagenes_delete);
+            console.log('Eliminar imágenes completado.');
         }
-        // Procesar imágenes
-        const imageValues = await procesarImagenes(imagenes, id);
-        if (imageValues.length > 0) {
-            await insertarImagenes(imageValues); 
+        // Procesar nuevas imágenes
+        if (imagenes && imagenes.length > 0) {
+            console.log('Procesando nuevas imágenes. Cantidad:', imagenes.length);
+            const imageValues = await procesarImagenes(imagenes, id);
+            if (imageValues.length > 0) {
+                console.log('Insertando nuevas imágenes en la DB con valores:', imageValues);
+                await insertarImagenes(imageValues); 
+                console.log('Nuevas imágenes insertadas.');
+            }
+        } else {
+            console.log('No hay nuevas imágenes para procesar.');
         }
         return { message: 'Producto actualizado correctamente' };
     } catch (error) {
-        console.error(error);
+        console.error('Error al actualizar el producto en servicio:', error); 
         return { error: 'Error al actualizar el producto' };
     }
 };
@@ -223,10 +236,8 @@ export async function  actualizarProductoService (id, { nombre, descripcion, cat
 export async function  elimiarImagenes (imagenes_delete) {
     try {
         // Convertir string a array y limpiar las rutas
-        const imagenes = imagenes_delete
-            .replace(/"/g, '')  // Eliminar comillas
-            .split(',')         // Separar por comas
-            .map(img => img.trim().replace('/img/uploads/', '')); // Limpiar cada ruta
+        const imagenes = JSON.parse(imagenes_delete)
+            .map(img => img.trim()); // No manipular la ruta, usarla directamente
         if (imagenes && imagenes.length > 0) {
             // Eliminar archivos del sistema
             await Promise.all(
@@ -248,7 +259,7 @@ export async function  elimiarImagenes (imagenes_delete) {
         }
     } catch (error) {
         console.error('Error eliminando imágenes:', error);
-        throw error;
+        throw error; // Re-lanzar el error para que sea manejado por el controlador
     }
 };
 

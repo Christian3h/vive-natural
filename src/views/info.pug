@@ -3,7 +3,78 @@ html(lang="es")
     head
         meta(charset="UTF-8")
         meta(name="viewport", content="width=device-width, initial-scale=1.0")
-        title Vive natural
-        link(rel="stylesheet", href="css/main/contacto.css")
+        title Vive natural - Información
+        link(rel="stylesheet", href="css/main/info.css")
     body 
         include partials/nav.pug
+        
+        main.info-container
+            div.info-titulo
+                h1 Sobre Vive Natural
+                p Descubre el poder de la naturaleza en cada producto
+
+            section.info-section
+                h2 Nuestra Historia
+                p Vive Natural nació en 2020 con la misión de llevar productos naturales y orgánicos de la más alta calidad a todos los hogares colombianos. Comenzamos como un pequeño emprendimiento familiar y hoy somos una marca reconocida en el mercado de productos naturales.
+
+            section.info-section
+                h2 Nuestros Valores
+                div.info-grid
+                    div.info-card
+                        img(src="img/icon/check-circle.svg", alt="Calidad")
+                        h3 Calidad Premium
+                        p Seleccionamos cuidadosamente cada producto para garantizar la mejor calidad.
+
+                    div.info-card
+                        img(src="img/icon/sun.svg", alt="Sostenibilidad")
+                        h3 Sostenibilidad
+                        p Comprometidos con el medio ambiente en cada paso de nuestro proceso.
+
+                    div.info-card
+                        img(src="img/icon/users.svg", alt="Comunidad")
+                        h3 Comunidad
+                        p Apoyamos a productores locales y fomentamos el comercio justo.
+
+            section.info-section#metodo-pago-preaprobacion
+                h2 Información sobre el método de pago con aprobación previa
+
+                details
+                    summary ¿En qué consiste este método de pago?
+                    p Este método permite al cliente realizar pagos por transferencia bancaria, en físico o mediante cuotas personalizadas, una vez la compra haya sido validada. Está diseñado para brindar mayor flexibilidad, pero requiere autorización previa por parte del administrador.
+                
+                details
+                    summary ¿Qué ocurre si intento usar este método sin aprobación?
+                    p Si el cliente selecciona uno de estos métodos sin tener autorización previa, el sistema no permitirá finalizar la compra. En su lugar, será automáticamente redirigido a una página informativa y su solicitud quedará registrada en la lista de espera para aprobación.
+                
+                details
+                    summary ¿Cómo es el proceso completo?
+                    ul
+                        li El cliente realiza la compra y selecciona un método de pago flexible.
+                        li Si ya está aprobado, la compra será enviada para revisión por parte del administrador.
+                        li Si aún no está aprobado, será redirigido automáticamente a la información del proceso y quedará registrado en la lista de espera.
+                        li Cada compra realizada bajo este método también requiere validación individual por el administrador.
+                        li Si la compra es aprobada, se enviarán las instrucciones de pago. En caso de no ser aprobada, será cancelada sin generar ningún cobro.
+                
+                details
+                    summary ¿Dónde puedo consultar el estado de mi solicitud o compra?
+                    p Puedes consultar el estado directamente en la sección de configuración de tu perfil dentro de la plataforma.
+
+            section.info-section.redirect-section
+                h2 ¿A dónde quieres ir?
+                div.redirect-grid
+                    a.redirect-card(href="/productos")
+                        img(src="img/icon/shopping-bag.svg", alt="Productos")
+                        h3 Nuestros Productos
+                        p Descubre nuestra amplia gama de productos naturales
+                    
+                    a.redirect-card(href="/contacto")
+                        img(src="img/icon/message-square.svg", alt="Contacto")
+                        h3 Contáctanos
+                        p Estamos aquí para resolver tus dudas
+                    
+                    a.redirect-card(href="/blog")
+                        img(src="img/icon/file-text.svg", alt="Blog")
+                        h3 Blog Natural
+                        p Aprende más sobre vida saludable
+
+        include partials/footer.pug

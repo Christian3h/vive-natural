@@ -7,12 +7,13 @@ html(lang="es")
         link(rel="stylesheet", href="css/main/tienda.css")
     body 
         include partials/nav.pug
-        main 
-            article(id="tienda")
-                h1 Productos Vive Natural
-            include partials/ordenarBotones.pug
-            article.productos 
-                div#productosContainer
+        div.content-and-footer-wrapper
+            main 
+                article(id="tienda")
+                    h1 Productos Vive Natural
+                include partials/ordenarBotones.pug
+                article.productos 
+                    div#productosContainer
 
-        include ./partials/footer.pug
-    script(src="../js/pages/tiendaPages.js" type="module"  defer) 
+            include ./partials/footer.pug
+        script(src="../js/pages/tiendaPages.js" type="module"  defer) 

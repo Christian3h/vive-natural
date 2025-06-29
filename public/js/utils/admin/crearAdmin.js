@@ -1,3 +1,5 @@
+import { createProductAdmin } from '../../fetch/utils/admin/crearAdminFetch.js';
+
 document.addEventListener("DOMContentLoaded", () => {
     const form = document.querySelector(".producto-crear");
 
@@ -11,9 +13,9 @@ document.addEventListener("DOMContentLoaded", () => {
         
         const formData = new FormData();
 
-        // Verificar que los elementos existen antes de acceder a su valor
         const nombre = form.querySelector("[name='nombre']");
         const descripcion = form.querySelector("[name='descripcion']");
+        const descripcionLarga = form.querySelector("[name='descripcionLarga']");
         const precio = form.querySelector("[name='precio']");
         const costo = form.querySelector("[name='costo']");
         const stock = form.querySelector("[name='stock']");
@@ -21,7 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const subCategoria = form.querySelector("#subCategoria");
         const fileInput = form.querySelector("[name='imagen']");
 
-        if (!nombre || !descripcion || !precio || !stock || !categoria || !subCategoria || !costo) {
+        if (!nombre || !descripcion || !descripcionLarga || !precio || !stock || !categoria || !subCategoria || !costo) {
             console.error("❌ Error: No se encontraron todos los campos del formulario.");
             alert("Error: Algunos campos del formulario no existen.");
             return;
@@ -32,8 +34,9 @@ document.addEventListener("DOMContentLoaded", () => {
         formData.append("precio", precio.value.trim());
         formData.append("costo", costo.value.trim());
         formData.append("stock", stock.value.trim());
+        const descripcionLargaValor = descripcionLarga.value.trim();
+        formData.append("descripcion_larga", descripcionLargaValor);
 
-        // Validar que el usuario haya seleccionado una categoría y subcategoría
         if (!categoria.value) {
             alert("Por favor, selecciona una categoría válida.");
             return;
@@ -46,10 +49,9 @@ document.addEventListener("DOMContentLoaded", () => {
         formData.append("categoria", categoria.value);
         formData.append("id_subcategoria", subCategoria.value);
 
-        // 📌 **Corrección: Asegurar que las imágenes se envían correctamente**
         if (fileInput && fileInput.files.length > 0) {
             for (let i = 0; i < fileInput.files.length; i++) {
-                formData.append("imagenes", fileInput.files[i]); // ✅ Enviar correctamente la imagen
+                formData.append("imagenes", fileInput.files[i]);
             }
         }
 
@@ -59,24 +61,10 @@ document.addEventListener("DOMContentLoaded", () => {
             console.log(pair[0], pair[1]);
         }
         
-        const url = "/api/producto/crearProducto";
-        console.log(formData)
         try {
-            const response = await fetch(url, {
-                method: "POST",
-                credentials: "include",
-                body: formData
-            });
-
-            const responseText = await response.text(); // Obtener respuesta como texto
-
-            if (!response.ok) {
-                throw new Error(`Error al crear el producto: ${response.status} - ${responseText}`);
-            }
-
-            const data = JSON.parse(responseText);
+            const data = await createProductAdmin(formData);
             alert("✅ Producto creado correctamente");
-            window.location.href = "/sesion/admin/productos"; // Redirigir después de éxito
+            window.location.href = "/admin/products/overview";
         } catch (error) {
             console.error("🚨 Error:", error);
             alert("❌ Hubo un problema al crear el producto. Revisa la consola para más detalles.");

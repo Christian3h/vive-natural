@@ -2,12 +2,14 @@
 console.log('Cargando Google Charts...');
 google.charts.load('current', { packages: ['corechart', 'bar', 'line'] });
 
+import { fetchDataFinanzas, fetchListDataFinanzas } from '../../fetch/pages/admin/finanzasAdminFetch.js';
+
 // Función para obtener datos de la API
 // Función para obtener datos de la API con conversión de tipos
 async function fetchData(endpoint) {
-  console.log(`Fetching data from: /sesion/admin/${endpoint}`);
+  console.log(`Fetching data from: /api/admin/${endpoint}`);
   try {
-    const response = await fetch(`/sesion/admin/${endpoint}`);
+    const response = await fetch(`/api/admin/${endpoint}`);
     console.log(`Response status for ${endpoint}:`, response.status);
 
     if (!response.ok) {
@@ -42,9 +44,9 @@ async function fetchData(endpoint) {
 
 // Función para obtener datos de lista
 async function fetchListData(endpoint) {
-  console.log(`Fetching list data from: /sesion/admin/${endpoint}`);
+  console.log(`Fetching list data from: /api/admin/${endpoint}`);
   try {
-    const response = await fetch(`/sesion/admin/${endpoint}`);
+    const response = await fetch(`/api/admin/${endpoint}`);
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
     const data = await response.json();
@@ -70,7 +72,7 @@ async function drawVentasMes() {
   if (!container) return;
 
   try {
-    const data = await fetchData('ventas-mes');
+    const data = await fetchDataFinanzas('sales/monthly'); // Usar la nueva función y ruta
     console.log('Datos de ventas:', data);
 
     const ingresosEsperados = typeof data.ingresos_esperados === 'number'
@@ -87,7 +89,15 @@ async function drawVentasMes() {
       ['Ingresos Reales', ingresosReales]
     ]);
 
-    // Resto del código...
+    const options = {
+      title: 'Ventas del Mes',
+      colors: ['#1B4332', '#C9A86A'],
+      is3D: true
+    };
+
+    const chart = new google.visualization.PieChart(container);
+    chart.draw(chartData, options);
+
   } catch (error) {
     console.error('Error en drawVentasMes:', error);
     container.innerHTML = `<p class="error">Error: ${error.message}</p>`;
@@ -99,25 +109,26 @@ async function drawPedidosAprobadosVsEntregados() {
   const container = document.getElementById('chart-pedidos');
   if (!container) return;
 
-  const data = await fetchData('pedidos-aprobados-vs-entregados');
-
-  const chartData = google.visualization.arrayToDataTable([
-    ['Estado', 'Cantidad'],
-    ['Aprobados', data.pedidos_aprobados || 0],
-    ['Entregados', data.pedidos_entregados || 0]
-  ]);
-
-  const options = {
-    title: 'Pedidos Aprobados vs Entregados',
-    colors: ['#1B4332', '#A8A8A8'],
-    bar: { groupWidth: '75%' },
-    legend: { position: 'none' },
-  };
-
   try {
+    const data = await fetchDataFinanzas('sales/approved-vs-delivered'); // Usar la nueva función y ruta
+
+    const chartData = google.visualization.arrayToDataTable([
+      ['Estado', 'Cantidad'],
+      ['Aprobados', data.pedidos_aprobados || 0],
+      ['Entregados', data.pedidos_entregados || 0]
+    ]);
+
+    const options = {
+      title: 'Pedidos Aprobados vs Entregados',
+      colors: ['#1B4332', '#A8A8A8'],
+      bar: { groupWidth: '75%' },
+      legend: { position: 'none' },
+    };
+
     const chart = new google.visualization.ColumnChart(container);
     chart.draw(chartData, options);
   } catch (error) {
+    console.error('Error en drawPedidosAprobadosVsEntregados:', error);
     container.innerHTML = `<p class="error">Error: ${error.message}</p>`;
   }
 }
@@ -128,15 +139,13 @@ async function drawPedidosPorMetodoDePago() {
   if (!container) return;
 
   try {
-    const data = await fetchListData('pedidos-metodo-pago');
+    const data = await fetchListDataFinanzas('sales/payment-method'); // Usar la nueva función y ruta
     console.log('Datos de método de pago:', data);
 
-    // Crear DataTable directamente
     const dataTable = new google.visualization.DataTable();
     dataTable.addColumn('string', 'Método de Pago');
     dataTable.addColumn('number', 'Total');
 
-    // Asegurarse de que los valores sean numéricos
     data.forEach(item => {
       const valor = typeof item.total_ingresado === 'number'
         ? item.total_ingresado
@@ -168,29 +177,30 @@ async function drawHistorialVentasMensual() {
   const container = document.getElementById('chart-historial');
   if (!container) return;
 
-  const data = await fetchListData('historial-ventas');
-
-  const chartData = new google.visualization.DataTable();
-  chartData.addColumn('string', 'Mes');
-  chartData.addColumn('number', 'Ventas');
-
-  data.forEach(item => {
-    chartData.addRow([item.mes || 'Mes', item.total_ventas || 0]);
-  });
-
-  const options = {
-    title: 'Historial de Ventas Mensual',
-    colors: ['#1B4332'],
-    hAxis: { title: 'Mes' },
-    vAxis: { title: 'Ventas' },
-    curveType: 'function',
-    legend: { position: 'none' }
-  };
-
   try {
+    const data = await fetchListDataFinanzas('sales/history'); // Usar la nueva función y ruta
+
+    const chartData = new google.visualization.DataTable();
+    chartData.addColumn('string', 'Mes');
+    chartData.addColumn('number', 'Ventas');
+
+    data.forEach(item => {
+      chartData.addRow([item.mes || 'Mes', item.total_ventas || 0]);
+    });
+
+    const options = {
+      title: 'Historial de Ventas Mensual',
+      colors: ['#1B4332'],
+      hAxis: { title: 'Mes' },
+      vAxis: { title: 'Ventas' },
+      curveType: 'function',
+      legend: { position: 'none' }
+    };
+
     const chart = new google.visualization.LineChart(container);
     chart.draw(chartData, options);
   } catch (error) {
+    console.error('Error en drawHistorialVentasMensual:', error);
     container.innerHTML = `<p class="error">Error: ${error.message}</p>`;
   }
 }
@@ -200,24 +210,25 @@ async function drawPedidosVencidos() {
   const container = document.getElementById('chart-pedidos-vencidos');
   if (!container) return;
 
-  const data = await fetchData('pedidos-vencidos');
-
-  const chartData = google.visualization.arrayToDataTable([
-    ['Estado', 'Cantidad'],
-    ['Vencidos', data.pedidos_vencidos || 0],
-    ['No Vencidos', data.pedidos_no_vencidos || 0]
-  ]);
-
-  const options = {
-    title: 'Pedidos Vencidos',
-    colors: ['#D64045', '#1B4332'],
-    pieSliceText: 'value',
-  };
-
   try {
+    const data = await fetchDataFinanzas('sales/overdue-orders'); // Usar la nueva función y ruta
+
+    const chartData = google.visualization.arrayToDataTable([
+      ['Estado', 'Cantidad'],
+      ['Vencidos', data.pedidos_vencidos || 0],
+      ['No Vencidos', data.pedidos_no_vencidos || 0]
+    ]);
+
+    const options = {
+      title: 'Pedidos Vencidos',
+      colors: ['#D64045', '#1B4332'],
+      pieSliceText: 'value',
+    };
+
     const chart = new google.visualization.PieChart(container);
     chart.draw(chartData, options);
   } catch (error) {
+    console.error('Error en drawPedidosVencidos:', error);
     container.innerHTML = `<p class="error">Error: ${error.message}</p>`;
   }
 }
@@ -227,54 +238,52 @@ async function drawTiempoPromedioPago() {
   const container = document.getElementById('chart-tiempo-promedio-pago');
   if (!container) return;
 
-  const data = await fetchData('tiempo-promedio-pago');
-
-  const chartData = google.visualization.arrayToDataTable([
-    ['Métrica', 'Días'],
-    ['Tiempo Promedio', data.tiempo_promedio || 0]
-  ]);
-
-  const options = {
-    title: 'Tiempo Promedio de Pago',
-    colors: ['#C9A86A'],
-    legend: { position: 'none' },
-    hAxis: { minValue: 0 }
-  };
-
   try {
+    const data = await fetchDataFinanzas('sales/average-payment-time'); // Usar la nueva función y ruta
+
+    const chartData = google.visualization.arrayToDataTable([
+      ['Métrica', 'Días'],
+      ['Tiempo Promedio', data.tiempo_promedio || 0]
+    ]);
+
+    const options = {
+      title: 'Tiempo Promedio de Pago',
+      colors: ['#C9A86A'],
+      legend: { position: 'none' },
+      hAxis: { minValue: 0 }
+    };
+
     const chart = new google.visualization.BarChart(container);
     chart.draw(chartData, options);
   } catch (error) {
+    console.error('Error en drawTiempoPromedioPago:', error);
     container.innerHTML = `<p class="error">Error: ${error.message}</p>`;
   }
 }
 
 // 7. Producto Más y Menos Vendido
 async function drawProductoMasYMenosVendido() {
-  const container = document.getElementById('chart-producto-mas-menos-vendido');
+  const container = document.getElementById('chart-producto-ventas');
   if (!container) return;
 
-  const data = await fetchData('productos-mas-menos-vendido');
-
-  const masVendido = data?.producto_mas_vendido || { nombre: 'N/A', cantidad: 0 };
-  const menosVendido = data?.producto_menos_vendido || { nombre: 'N/A', cantidad: 0 };
-
-  const chartData = google.visualization.arrayToDataTable([
-    ['Producto', 'Cantidad Vendida'],
-    [`Más: ${masVendido.nombre}`, masVendido.cantidad],
-    [`Menos: ${menosVendido.nombre}`, menosVendido.cantidad]
-  ]);
-
-  const options = {
-    title: 'Producto Más y Menos Vendido',
-    colors: ['#1B4332', '#A8A8A8'],
-    legend: { position: 'none' },
-  };
-
   try {
+    const data = await fetchListDataFinanzas('sales/products-sales-performance'); // Usar la nueva función y ruta
+
+    const chartData = google.visualization.arrayToDataTable([
+      ['Producto', 'Cantidad Vendida'],
+      ...(data || []).map(item => [item.nombre, item.cantidad_vendida])
+    ]);
+
+    const options = {
+      title: 'Producto Más y Menos Vendido',
+      colors: ['#1B4332', '#A8A8A8'],
+      legend: { position: 'none' }
+    };
+
     const chart = new google.visualization.ColumnChart(container);
     chart.draw(chartData, options);
   } catch (error) {
+    console.error('Error en drawProductoMasYMenosVendido:', error);
     container.innerHTML = `<p class="error">Error: ${error.message}</p>`;
   }
 }
@@ -284,59 +293,51 @@ async function drawInventarioActual() {
   const container = document.getElementById('chart-inventario-actual');
   if (!container) return;
 
-  const data = await fetchListData('inventario-actual');
-
-  const chartData = new google.visualization.DataTable();
-  chartData.addColumn('string', 'Producto');
-  chartData.addColumn('number', 'Cantidad');
-
-  // Mostrar solo los top 10 productos para mejor visualización
-  data.slice(0, 10).forEach(item => {
-    chartData.addRow([item.nombre || 'Producto', item.cantidad || 0]);
-  });
-
-  const options = {
-    title: 'Inventario Actual (Top 10)',
-    colors: ['#1B4332'],
-    legend: { position: 'none' },
-    hAxis: { title: 'Cantidad' },
-    vAxis: { title: 'Producto' }
-  };
-
   try {
-    const chart = new google.visualization.BarChart(container);
+    const data = await fetchListDataFinanzas('sales/current-inventory'); // Usar la nueva función y ruta
+
+    const chartData = google.visualization.arrayToDataTable([
+      ['Producto', 'Cantidad en Stock'],
+      ...(data || []).map(item => [item.nombre, item.cantidad_actual])
+    ]);
+
+    const options = {
+      title: 'Inventario Actual',
+      colors: ['#1B4332'],
+      legend: { position: 'none' }
+    };
+
+    const chart = new google.visualization.ColumnChart(container);
     chart.draw(chartData, options);
   } catch (error) {
+    console.error('Error en drawInventarioActual:', error);
     container.innerHTML = `<p class="error">Error: ${error.message}</p>`;
   }
 }
 
-// 9. Productos sin Ventas
+// 9. Productos Sin Ventas
 async function drawProductosSinVentas() {
   const container = document.getElementById('chart-productos-sin-ventas');
   if (!container) return;
 
-  const data = await fetchListData('productos-sin-ventas');
-
-  const chartData = new google.visualization.DataTable();
-  chartData.addColumn('string', 'Producto');
-  chartData.addColumn('number', 'Días sin ventas');
-
-  // Mostrar solo los top 10 productos para mejor visualización
-  data.slice(0, 10).forEach(item => {
-    chartData.addRow([item.nombre || 'Producto', item.dias_sin_ventas || 0]);
-  });
-
-  const options = {
-    title: 'Productos sin Ventas (Top 10)',
-    colors: ['#D64045'],
-    legend: { position: 'none' }
-  };
-
   try {
+    const data = await fetchListDataFinanzas('sales/products-without-sales'); // Usar la nueva función y ruta
+
+    const chartData = google.visualization.arrayToDataTable([
+      ['Producto', 'Veces sin vender'],
+      ...(data || []).map(item => [item.nombre, item.veces_sin_vender])
+    ]);
+
+    const options = {
+      title: 'Productos Sin Ventas',
+      colors: ['#D64045'],
+      legend: { position: 'none' }
+    };
+
     const chart = new google.visualization.ColumnChart(container);
     chart.draw(chartData, options);
   } catch (error) {
+    console.error('Error en drawProductosSinVentas:', error);
     container.innerHTML = `<p class="error">Error: ${error.message}</p>`;
   }
 }
@@ -346,91 +347,73 @@ async function drawUtilidadBrutaDelMes() {
   const container = document.getElementById('chart-utilidad-bruta');
   if (!container) return;
 
-  const data = await fetchData('utilidad-bruta');
-  console.log(data);
-
-  const totalGanancia = data.reduce((sum, item) => sum + parseFloat(item.ganancia || 0), 0);
-  const totalCostos = 0; // Puedes actualizar esto cuando tengas los datos reales
-
-  const chartData = google.visualization.arrayToDataTable([
-    ['Concepto', 'Monto', { role: 'style' }],
-    ['Utilidad Bruta', totalGanancia, '#1B4332'],
-    //['Costos', totalCostos, '#A8A8A8']
-  ]);
-
-  const options = {
-    title: 'Resumen Financiero del Mes',
-    legend: { position: 'none' },
-    height: 400,
-    hAxis: {
-      title: 'Concepto',
-    },
-    vAxis: {
-      title: 'ganancias por mes',
-    },
-    bar: { groupWidth: '50%' },
-  };
-
   try {
-    const chart = new google.visualization.ColumnChart(container);
+    const data = await fetchDataFinanzas('sales/gross-profit'); // Usar la nueva función y ruta
+
+    const chartData = google.visualization.arrayToDataTable([
+      ['Métrica', 'Monto'],
+      ['Utilidad Bruta', data.utilidad_bruta || 0]
+    ]);
+
+    const options = {
+      title: 'Utilidad Bruta del Mes',
+      colors: ['#1B4332'],
+      legend: { position: 'none' }
+    };
+
+    const chart = new google.visualization.BarChart(container);
     chart.draw(chartData, options);
   } catch (error) {
+    console.error('Error en drawUtilidadBrutaDelMes:', error);
     container.innerHTML = `<p class="error">Error: ${error.message}</p>`;
   }
 }
-
 
 // 11. Top Clientes con Más Deuda
 async function drawTopClientesConMasDeuda() {
   const container = document.getElementById('chart-top-clientes-deuda');
   if (!container) return;
 
-  const data = await fetchListData('top-clientes-deuda');
-
-  const chartData = new google.visualization.DataTable();
-  chartData.addColumn('string', 'Cliente');
-  chartData.addColumn('number', 'Deuda');
-
-  // Mostrar solo los top 5 clientes para mejor visualización
-  data.slice(0, 5).forEach(item => {
-    chartData.addRow([item.nombre || 'Cliente', item.deuda || 0]);
-  });
-
-  const options = {
-    title: 'Top 5 Clientes con Mayor Deuda',
-    colors: ['#D64045'],
-    legend: { position: 'none' }
-  };
-
   try {
-    const chart = new google.visualization.BarChart(container);
+    const data = await fetchListDataFinanzas('sales/top-debt-clients'); // Usar la nueva función y ruta
+
+    const chartData = google.visualization.arrayToDataTable([
+      ['Cliente', 'Deuda'],
+      ...(data || []).map(item => [item.nombre_cliente, item.deuda_total])
+    ]);
+
+    const options = {
+      title: 'Top Clientes con Más Deuda',
+      colors: ['#D64045'],
+      legend: { position: 'none' }
+    };
+
+    const chart = new google.visualization.ColumnChart(container);
     chart.draw(chartData, options);
   } catch (error) {
+    console.error('Error en drawTopClientesConMasDeuda:', error);
     container.innerHTML = `<p class="error">Error: ${error.message}</p>`;
   }
 }
 
-// Función principal que coordina todo
+// Función principal para dibujar todos los gráficos
 async function drawAllCharts() {
-  try {
-    await drawVentasMes();
-    await drawPedidosAprobadosVsEntregados();
-    await drawPedidosPorMetodoDePago();
-    await drawHistorialVentasMensual();
-    await drawPedidosVencidos();
-    await drawTiempoPromedioPago();
-    await drawProductoMasYMenosVendido();
-    await drawInventarioActual();
-    await drawProductosSinVentas();
-    await drawUtilidadBrutaDelMes();
-    await drawTopClientesConMasDeuda();
-    console.log('Todos los gráficos dibujados correctamente');
-  } catch (error) {
-    console.error('Error al dibujar gráficos:', error);
-  }
+  await Promise.all([
+    drawVentasMes(),
+    drawPedidosAprobadosVsEntregados(),
+    drawPedidosPorMetodoDePago(),
+    drawHistorialVentasMensual(),
+    drawPedidosVencidos(),
+    drawTiempoPromedioPago(),
+    drawProductoMasYMenosVendido(),
+    drawInventarioActual(),
+    drawProductosSinVentas(),
+    drawUtilidadBrutaDelMes(),
+    drawTopClientesConMasDeuda()
+  ]);
 }
 
-// Inicialización cuando Google Charts esté listo
+// Llamar a la función drawAllCharts cuando Google Charts esté cargado
 google.charts.setOnLoadCallback(drawAllCharts);
 
 // Manejar redimensionamiento de la ventana
